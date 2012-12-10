@@ -87,6 +87,19 @@ namespace Play
 		}
 
 		[Test()]
+		public void TestIntersect2()
+		{
+			Group a = new Group();
+			a.Add (0);
+			a.Add (10);
+			
+			Group b = null;
+			
+			Group c = a * b;
+			Assert.AreEqual (true, Group.IsEmpty(c));
+		}
+
+		[Test()]
 		public void TestUnion1()
 		{
 			Group a = new Group();
@@ -104,6 +117,19 @@ namespace Play
 		}
 
 		[Test()]
+		public void TestUnion2()
+		{
+			Group a = new Group();
+			a.Add (0);
+			a.Add (10);
+			
+			Group b = null;
+			
+			Group c = a + b;
+			Assert.AreEqual (null, c);
+		}
+
+		[Test()]
 		public void TestSubtract1()
 		{
 			Group a = new Group();
@@ -118,6 +144,28 @@ namespace Play
 			Assert.AreEqual (2, c.Count);
 			Assert.AreEqual(0, c[0]);
 			Assert.AreEqual (9, c[1]);
+		}
+
+		[Test()]
+		public void TestAdd1()
+		{
+			Group a = new Group();
+			Assert.AreEqual (0, a.Count);
+			a += 0;
+			Assert.AreEqual (2, a.Count);
+			a += 0;
+			Assert.AreEqual (1, a[1]);
+			a += 1;
+			Assert.AreEqual (2, a[1]);
+		}
+
+		[Test()]
+		public void TestIsEmpty1()
+		{
+			Group a = new Group();
+			Assert.AreEqual (true, Group.IsEmpty(a));
+			a += 5;
+			Assert.AreEqual (false, Group.IsEmpty (a));
 		}
 	}
 }

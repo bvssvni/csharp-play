@@ -57,8 +57,33 @@ namespace Play
 			return Predicate (delegate(Li li){return li.Value.GetType() == t;}, data);
 		}
 
+		// Adds a new member to a group.
+		public static Group Add(Group a, int id)
+		{
+			Group b = new Group();
+			b.Add (id);
+			b.Add (id + 1);
+			return a + b;
+		}
+
+		public static Group operator +(Group a, int id)
+		{
+			return Group.Add (a, id);
+		}
+
+		// Returns true if the group is empty, which includes null.
+		public static bool IsEmpty(Group a)
+		{
+			if (a == null || a.Count == 0) return true;
+
+			return false;
+		}
+
+		// Intersects two groups and creates a new one.
 		public static Group Intersect(Group a, Group b)
 		{
+			if (a == null || b == null) return null;
+
 			Group arr = new Group();
 
 			int alength = a.Count;
@@ -100,6 +125,7 @@ namespace Play
 			return arr;
 		}
 
+		// Creates a group that contains member of both groups.
 		public static Group Union(Group a, Group b)
 		{
 			if (a == null || b == null) return null;
@@ -158,6 +184,7 @@ namespace Play
 			return list;
 		}
 	
+		// Removes all members of _b_ from group _a_.
 		public static Group Subtract(Group a, Group b)
 		{
 			if (a == null || b == null) return null;
@@ -221,6 +248,34 @@ namespace Play
 		public static Group operator -(Group a, Group b)
 		{
 			return Group.Subtract (a, b);
+		}
+
+		public static bool AreEqual(Group a, Group b)
+		{
+			bool aEmpty = Group.IsEmpty (a);
+			bool bEmpty = Group.IsEmpty (b);
+			if (aEmpty && bEmpty) return true;
+			if (aEmpty != bEmpty) return false;
+
+			int na = a.Count;
+			int nb = b.Count;
+			if (na != nb) return false;
+
+			for (int i = 0; i < na; i++)
+			{
+				if (a[i] != b[i]) return false;
+			}
+
+			return true;
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj is Group) {
+				return Group.AreEqual (this, obj as Group);
+			} else {
+				return base.Equals (obj);
+			}
 		}
 	}
 
