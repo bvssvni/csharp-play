@@ -27,3 +27,30 @@ The simpler structure, the more independent changes can we make to the history.
 We also record the changes of history as li structures, so the user can undo/redo the actions.
 There are several techniques of doing this, but if it gets too complicated one can just ignore
 the start/end interval and use the data itself.
+
+##Introduction of the concept of a "Group"
+
+A "Group" is an ordered selection of identifier numbers.
+It can be the positions of characters in some text or the indices in a list.
+
+The format "group bitstream" is storing two numbers per slice of indices that fulfill the same condition.
+This format is slower when inserting or deleting a single item, but faster for whole groups.
+Because a group satisfy Boolean algebra (union, intersection, subtraction) it can be thought of a "superbit".
+
+Group oriented programming is a powerful concept where you deduce information by creating and reusing groups.
+The code tend to be much simpler and clearer than traditional programming.
+There are less loops because you perform conditions on the groups as a whole, not on single items.
+
+A function that returns True or False is called a predicate.
+In predicate logic, it is common to say "for all"  and "exists".
+
+"For all" means a condition is satisfied for all items in a group.
+Written in group oriented programming, this becomes
+
+    f(a) == a
+    
+"Exists" means there is at least one item that fulfill the condition in a group.
+Written in group oriented programming, this becomes
+
+    f(a) > 0
+    
