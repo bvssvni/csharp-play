@@ -16,10 +16,23 @@ namespace Play
 		{
 		}
 
-		public delegate bool IsTrue(Li li);
+		public delegate bool IsTrue<T>(T item);
 
-		// Creates a group by predicate function.
-		public static Group Predicate(IsTrue func, Data data)
+		/// <summary>
+		/// A predicate is a function that returns true or false.
+		/// This method constructs a group from feeding a function one by one with data.
+		/// The indices in the list of data is used to set the group.
+		/// </summary>
+		/// <param name='func'>
+		/// A predicate function.
+		/// </param>
+		/// <param name='data'>
+		/// The data to check for condition.
+		/// </param>
+		/// <typeparam name='T'>
+		/// The type of data in the list.
+		/// </typeparam>
+		public static Group Predicate<T>(IsTrue<T> func, IList<T> data)
 		{
 			Group g = new Group();
 			int n = data.Count;
@@ -27,7 +40,7 @@ namespace Play
 			bool was = false;
 			for (int i = 0; i < n; i++)
 			{
-				Li a = data[i];
+				var a = data[i];
 				has = func(a);
 				if (has != was)
 				{
@@ -42,26 +55,18 @@ namespace Play
 			return g;
 		}
 
-		// Creates a group of data intersected by a specific point in time.
-		public static Group Time(Data data, long time)
-		{
-			return Predicate(delegate(Li li) {
-				return li.Start <= time && li.End > time;
-			}, data);
-		}
-
-		// Creates a group of data that has a certain kind.
-		public static Group Type(Data data, Type t)
-		{
-			return Predicate(delegate(Li li) {
-				return li.Value.GetType() == t;
-			}, data);
-		}
-
-		// Adds a new member to a group.
+		/// <summary>
+		/// Adds a member to a group.
+		/// </summary>
+		/// <param name='a'>
+		/// The group to add the member to.
+		/// </param>
+		/// <param name='id'>
+		/// The id of the new member.
+		/// </param>
 		public static Group Add(Group a, int id)
 		{
-			Group b = new Group();
+			var b = new Group();
 			b.Add(id);
 			b.Add(id + 1);
 			return a + b;
@@ -346,6 +351,35 @@ namespace Play
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();
+		}
+
+		public static Group Slice(int start, int end)
+		{
+			var g = new Group(new int[]{start, end-1});
+			return g;
+		}
+
+		/// <summary>
+		/// Returns an enumerator iterating forward a list.
+		/// </summary>
+		/// <param name='list'>
+		/// This list to iterate through.
+		/// </param>
+		/// <typeparam name='T'>
+		/// The type of object to return.
+		/// </typeparam>
+		public IEnumerable<T> Forward<T>(IList<T> list)
+		{
+			int n = this.Count/2;
+			for (int i = 0; i < n; i++)
+			{
+				int start = this[i*2];
+				int end = this[i*2+1];
+				for (int j = start; j < end; j++)
+				{
+					yield return list[j];
+				}
+			}
 		}
 	}
 

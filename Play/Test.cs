@@ -118,6 +118,20 @@ namespace Play
 			Assert.False(a < 10);
 			Assert.True(a >= 10);
 		}
+
+		[Test()]
+		public void TestForward()
+		{
+			var arr = new int[] {0,1,2,3,4,5,6};
+			var g = Group.Slice(2, 4);
+			int j = 0;
+			foreach (int i in g.Forward<int>(arr))
+			{
+				Console.WriteLine(i.ToString());
+				Assert.True(i == arr[j+2]);
+				j++;
+			}
+		}
 	}
 }
 
