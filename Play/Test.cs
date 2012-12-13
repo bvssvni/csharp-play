@@ -146,6 +146,32 @@ namespace Play
 				j--;
 			}
 		}
+
+		[Test()]
+		public void TestFilter()
+		{
+			var g = new Group(new int[]{1,100});
+			g *= delegate (int i) {return i % 10 == 0;};
+			Assert.True(g[0] == 10);
+			Assert.True(g[1] == 11);
+			Assert.True(g[2] == 20);
+			Assert.True(g[3] == 21);
+			Assert.True(g[4] == 30);
+			Assert.True(g[5] == 31);
+			Assert.True(g[6] == 40);
+			Assert.True(g[7] == 41);
+			Assert.True(g[8] == 50);
+			Assert.True(g[9] == 51);
+			Assert.True(g[10] == 60);
+			Assert.True(g[11] == 61);
+			Assert.True(g[12] == 70);
+			Assert.True(g[13] == 71);
+			Assert.True(g[14] == 80);
+			Assert.True(g[15] == 81);
+			Assert.True(g[16] == 90);
+			Assert.True(g[17] == 91);
+			Assert.True(g.Count == 18);
+		}
 	}
 }
 

@@ -55,6 +55,57 @@ namespace Play
 			return g;
 		}
 
+		public delegate bool IsTrueByIndex(int index);
+
+		/// <summary>
+		/// Creates a group filtered by a function using the index as argument.
+		/// Use closures to access data in addition to the index.
+		/// </summary>
+		/// <param name='g'>
+		/// The group to filter.
+		/// </param>
+		/// <param name='func'>
+		/// A function that takes an index as argument and returns a bool value.
+		/// </param>
+		public static Group Filter(Group g, IsTrueByIndex func)
+		{
+			if (g == null) return null;
+
+			Group res = new Group();
+			bool was = false;
+			bool has = false;
+			int n = g.Count/2;
+			for (int i = 0; i < n; i++)
+			{
+				was = false;
+				has = false;
+
+				int start = g[i*2];
+				int end = g[i*2+1];
+				for (int j = start; j < end; j++)
+				{
+					has = func(j);
+					if (has != was)
+					{
+						res.Add(j);
+					}
+					was = has;
+				}
+
+				if (was)
+				{
+					res.Add(end);
+				}
+			}
+
+			return res;
+		}
+
+		public static Group operator * (Group a, IsTrueByIndex func)
+		{
+			return Group.Filter(a, func);
+		}
+
 		/// <summary>
 		/// Adds a member to a group.
 		/// </summary>
@@ -173,7 +224,16 @@ namespace Play
 			return arr;
 		}
 
-		// Creates a group that contains member of both groups.
+		/// <summary>
+		/// Creates a union of 'a'  and 'b'.
+		/// The returned group contains all members of 'a' and 'b'.
+		/// </summary>
+		/// <param name='a'>
+		/// The first group to join.
+		/// </param>
+		/// <param name='b'>
+		/// The second group to join.
+		/// </param>
 		public static Group Union(Group a, Group b)
 		{
 			if (a == null || b == null)
