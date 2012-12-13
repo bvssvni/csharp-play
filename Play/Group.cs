@@ -28,10 +28,7 @@ namespace Play
 			for (int i = 0; i < n; i++)
 			{
 				Li a = data[i];
-				if (func(a))
-				{
-					has = true;
-				}
+				has = func(a);
 				if (has != was)
 				{
 					g.Add(i);
@@ -90,6 +87,7 @@ namespace Play
 		public int CompareTo(object obj)
 		{
 			int size = Group.Size(this);
+
 			return size.CompareTo(obj);
 		}
 
@@ -136,45 +134,35 @@ namespace Play
 				return arr;
 
 			int i = 0, j = 0; 
-			bool ba = false; 
-			bool bb = false; 
-			bool oldB = false;
-			int pa, pb;
-			while (i < alength || j < blength)
+			bool isA = false; 
+			bool isB = false; 
+			bool was = false;
+			bool has = false;
+			int pa, pb, min;
+			while (i < alength && j < blength)
 			{
-				pa = a[i >= alength ? alength - 1 : i];
-				pb = b[j >= blength ? blength - 1 : j];
-				
-				if (pa == pb)
+				// Get the last value from each group.
+				pa = i >= alength ? int.MaxValue : a[i];
+				pb = j >= blength ? int.MaxValue : b[j];
+				min = pa < pb ? pa : pb;
+
+				// Advance the one with least value, both if they got the same.
+				if (pa == min) 
 				{
-					ba = !ba;
-					bb = !bb;
-					if ((ba && bb) != oldB)
-						arr.Add(pa);
-					
-					i++;
-					j++;
-				}
-				else if ((pa < pb || j >= blength) && i < alength)
-				{
-					ba = !ba;
-					if ((ba && bb) != oldB)
-						arr.Add(pa);
-					
+					isA = !isA; 
 					i++;
 				}
-				else if (j < blength)
+				if (pb == min)
 				{
-					bb = !bb;
-					if ((ba && bb) != oldB)
-						arr.Add(pb);
-					
+					isB = !isB;
 					j++;
 				}
-				else
-					break;
-				
-				oldB = ba && bb;
+
+				// Find out if the new change should be added to the result.
+				has = isA && isB;
+				if (has != was) arr.Add(min);
+
+				was = has;
 			}
 			
 			return arr;
@@ -193,69 +181,65 @@ namespace Play
 
 			if (a_length == 0 && b_length == 0)
 				return list;
-			
-			int k;
+
 			if (a_length == 0)
 			{
-				for (k = 0; k < b_length; k++)
-					list.Add(b[k]);
+				list.AddRange(b);
 				
 				return list;
 			}
 			if (b_length == 0)
 			{
-				for (k = 0; k < a_length; k++)
-					list.Add(a[k]);
+				list.AddRange(a);
 				
 				return list;
 			}
 
 			int i = 0, j = 0; 
-			bool ba = false; 
-			bool bb = false; 
-			bool oldB = false;
-			int pa, pb;
+			bool isA = false; 
+			bool isB = false; 
+			bool was = false;
+			bool has = false;
+			int pa, pb, min;
 			while (i < a_length || j < b_length)
 			{
-				pa = a[i >= a_length ? a_length - 1 : i];
-				pb = b[j >= b_length ? b_length - 1 : j];
-				
-				if (pa == pb)
+				// Get the least value.
+				pa = i >= a_length ? int.MaxValue : a[i];
+				pb = j >= b_length ? int.MaxValue : b[j];
+				min = pa < pb ? pa : pb;
+
+				// Advance the least value, both if both are equal.
+				if (pa == min)
 				{
-					ba = !ba;
-					bb = !bb;
-					if ((ba || bb) != oldB)
-						list.Add(pa);
-					
-					i++;
-					j++;
-				}
-				else if ((pa < pb || j >= b_length) && i < a_length)
-				{
-					ba = !ba;
-					if ((ba || bb) != oldB)
-						list.Add(pa);
-					
+					isA = !isA;
 					i++;
 				}
-				else if (j < b_length)
+				if (pb == min)
 				{
-					bb = !bb;
-					if ((ba || bb) != oldB)
-						list.Add(pb);
-					
+					isB = !isB;
 					j++;
 				}
-				else
-					break;
+
+				// Add to result if this changes the truth value.
+				has = isA || isB;
+				if (has != was) list.Add(min);
 				
-				oldB = ba || bb;
+				was = isA || isB;
 			}
 			
 			return list;
 		}
 	
 		// Removes all members of _b_ from group _a_.
+		/// <summary>
+		/// Creates a group that contains member of 'a' but not 'b'.
+		/// </summary>
+		/// <param name='a'>
+		/// The group with the members to choose from.
+		/// </param>
+		/// <param name='b'>
+		/// The group that we should not have members from.
+		/// </param>
 		public static Group Subtract(Group a, Group b)
 		{
 			if (a == null || b == null)
@@ -275,46 +259,35 @@ namespace Play
 				return arr;
 			
 			int i = 0, j = 0; 
-			bool ba = false; 
-			bool bb = true; 
-			bool oldB = false;
-			int pa;
-			int pb; 
-			while (i < a_length || j < b_length)
+			bool isA = false; 
+			bool isB = false;
+			bool was = false;
+			bool has = false;
+			int pa, pb, min; 
+			while (i < a_length)
 			{
-				pa = a[i >= a_length ? a_length - 1 : i];
-				pb = b[j >= b_length ? b_length - 1 : j];
-				
-				if (pa == pb)
+				// Get the last value from each group.
+				pa = i >= a_length ? int.MaxValue : a[i];
+				pb = j >= b_length ? int.MaxValue : b[j];
+				min = pa < pb ? pa : pb;
+
+				// Advance the group with least value, both if they are equal.
+				if (pa == min)
 				{
-					ba = !ba;
-					bb = !bb;
-					if ((ba && bb) != oldB)
-						arr.Add(pa);
-					
-					i++;
-					j++;
-				}
-				else if ((pa < pb || j >= b_length) && i < a_length)
-				{
-					ba = !ba;
-					if ((ba && bb) != oldB)
-						arr.Add(pa);
-					
+					isA = !isA;
 					i++;
 				}
-				else if (j < b_length)
+				if (pb == min)
 				{
-					bb = !bb;
-					if ((ba && bb) != oldB)
-						arr.Add(pb);
-					
+					isB = !isB;
 					j++;
 				}
-				else
-					break;
-				
-				oldB = ba && bb;
+
+				// If it changes the truth value, add to result.
+				has = isA && !isB;
+				if (has != was) arr.Add(min);
+
+				was = has;
 			}
 			
 			return arr;
