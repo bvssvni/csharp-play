@@ -353,9 +353,18 @@ namespace Play
 			return base.GetHashCode();
 		}
 
+		/// <summary>
+		/// Returns a group that contains the indices from 'start' including 'end'.
+		/// </summary>
+		/// <param name='start'>
+		/// The first index.
+		/// </param>
+		/// <param name='end'>
+		/// The last index.
+		/// </param>
 		public static Group Slice(int start, int end)
 		{
-			var g = new Group(new int[]{start, end-1});
+			var g = new Group(new int[]{start, end+1});
 			return g;
 		}
 
@@ -363,7 +372,7 @@ namespace Play
 		/// Returns an enumerator iterating forward a list.
 		/// </summary>
 		/// <param name='list'>
-		/// This list to iterate through.
+		/// The list to iterate through.
 		/// </param>
 		/// <typeparam name='T'>
 		/// The type of object to return.
@@ -376,6 +385,29 @@ namespace Play
 				int start = this[i*2];
 				int end = this[i*2+1];
 				for (int j = start; j < end; j++)
+				{
+					yield return list[j];
+				}
+			}
+		}
+
+		/// <summary>
+		/// Returns an enumerator iterating backward a list.
+		/// </summary>
+		/// <param name='list'>
+		/// The list to iterate through.
+		/// </param>
+		/// <typeparam name='T'>
+		/// The type of object to return.
+		/// </typeparam>
+		public IEnumerable<T> Backward<T>(IList<T> list)
+		{
+			int n = this.Count/2;
+			for (int i = n-1; i >= 0; i--)
+			{
+				int start = this[i*2];
+				int end = this[i*2+1];
+				for (int j = end-1; j >= start; j--)
 				{
 					yield return list[j];
 				}

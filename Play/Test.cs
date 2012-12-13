@@ -132,6 +132,20 @@ namespace Play
 				j++;
 			}
 		}
+
+		[Test()]
+		public void TestBackward()
+		{
+			var arr = new int[] {0,1,2,3,4,5,6};
+			var g = Group.Slice(2, 4);
+			int j = 4;
+			foreach (int i in g.Backward<int>(arr))
+			{
+				Console.WriteLine(i.ToString());
+				Assert.True(i == arr[j]);
+				j--;
+			}
+		}
 	}
 }
 
