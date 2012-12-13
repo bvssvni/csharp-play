@@ -142,29 +142,83 @@ namespace Play
 
 		public int CompareTo(object obj)
 		{
-			int size = Group.Size(this);
+			// If the object is not a group, compare by size.
+			if (!(obj is Group)) return Group.Size(this).CompareTo(obj);
 
-			return size.CompareTo(obj);
+			// Compare groups.
+			var a = this;
+			var b = (Group)obj;
+			var na = a.Count;
+			var nb = b.Count;
+
+			if (na != nb) return na.CompareTo(nb);
+
+			for (int i = 0; i < na; i++)
+			{
+				if (a[i] < b[i]) return -1;
+				if (a[i] > b[i]) return 1;
+			}
+			return 0;
 		}
 
-		public static bool operator <(Group a, int n)
+		public static bool operator < (Group a, int n)
 		{
 			return a.CompareTo(n) < 0;
 		}
 
-		public static bool operator >(Group a, int n)
+		public static bool operator < (Group a, Group b)
+		{
+			return a.CompareTo(b) < 0;
+		}
+
+		public static bool operator > (Group a, int n)
 		{
 			return a.CompareTo(n) > 0;
 		}
 
-		public static bool operator <=(Group a, int n)
+		public static bool operator > (Group a, Group b)
+		{
+			return a.CompareTo(b) > 0;
+		}
+
+		public static bool operator <= (Group a, int n)
 		{
 			return a.CompareTo(n) <= 0;
 		}
 
-		public static bool operator >=(Group a, int n)
+		public static bool operator <= (Group a, Group b)
+		{
+			return a.CompareTo(b) <= 0;
+		}
+
+		public static bool operator >= (Group a, int n)
 		{
 			return a.CompareTo(n) >= 0;
+		}
+
+		public static bool operator >= (Group a, Group b)
+		{
+			return a.CompareTo(b) >= 0;
+		}
+
+		public static bool operator == (Group a, int n)
+		{
+			return a.CompareTo(n) == 0;
+		}
+
+		public static bool operator == (Group a, Group b)
+		{
+			return a.CompareTo(b) == 0;
+		}
+
+		public static bool operator != (Group a, int n)
+		{
+			return a.CompareTo(n) != 0;
+		}
+
+		public static bool operator != (Group a, Group b)
+		{
+			return a.CompareTo(b) != 0;
 		}
 
 		// Returns true if the group is empty, which includes null.
@@ -179,9 +233,6 @@ namespace Play
 		// Intersects two groups and creates a new one.
 		public static Group Intersect(Group a, Group b)
 		{
-			if (a == null || b == null)
-				return null;
-
 			Group arr = new Group();
 
 			int alength = a.Count;
@@ -236,9 +287,6 @@ namespace Play
 		/// </param>
 		public static Group Union(Group a, Group b)
 		{
-			if (a == null || b == null)
-				return null;
-
 			Group list = new Group();
 
 			int a_length = a.Count;
@@ -307,9 +355,6 @@ namespace Play
 		/// </param>
 		public static Group Subtract(Group a, Group b)
 		{
-			if (a == null || b == null)
-				return null;
-
 			int a_length = a.Count;
 			int b_length = b.Count;
 			if (b_length == 0)
@@ -371,46 +416,6 @@ namespace Play
 		public static Group operator -(Group a, Group b)
 		{
 			return Group.Subtract(a, b);
-		}
-
-		public static bool AreEqual(Group a, Group b)
-		{
-			bool aEmpty = Group.IsEmpty(a);
-			bool bEmpty = Group.IsEmpty(b);
-			if (aEmpty && bEmpty)
-				return true;
-			if (aEmpty != bEmpty)
-				return false;
-
-			int na = a.Count;
-			int nb = b.Count;
-			if (na != nb)
-				return false;
-
-			for (int i = 0; i < na; i++)
-			{
-				if (a[i] != b[i])
-					return false;
-			}
-
-			return true;
-		}
-
-		public override bool Equals(object obj)
-		{
-			if (obj is Group)
-			{
-				return Group.AreEqual(this, obj as Group);
-			}
-			else
-			{
-				return base.Equals(obj);
-			}
-		}
-
-		public override int GetHashCode()
-		{
-			return base.GetHashCode();
 		}
 
 		/// <summary>

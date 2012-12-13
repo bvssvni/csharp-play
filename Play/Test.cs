@@ -30,7 +30,7 @@ namespace Play
 			a.Add(0);
 			a.Add(10);
 			
-			Group b = null;
+			Group b = new Group();
 			
 			Group c = a * b;
 			Assert.AreEqual(true, Group.IsEmpty(c));
@@ -60,10 +60,10 @@ namespace Play
 			a.Add(0);
 			a.Add(10);
 			
-			Group b = null;
+			Group b = new Group();
 			
 			Group c = a + b;
-			Assert.AreEqual(null, c);
+			Assert.True(a == c);
 		}
 
 		[Test()]
@@ -170,7 +170,21 @@ namespace Play
 			Assert.True(g[15] == 81);
 			Assert.True(g[16] == 90);
 			Assert.True(g[17] == 91);
-			Assert.True(g.Count == 18);
+			Assert.True(g == 9);
+		}
+
+		[Test()]
+		public void TestCompareGroups()
+		{
+			var a = new Group(new int[]{13, 15});
+			var b = new Group(new int[]{13, 15});
+			var c = new Group(new int[]{13, 14});
+
+			Assert.True(a == b);
+			Assert.True(a > c);
+			Assert.True(b > c);
+			Assert.True(a >= c);
+			Assert.True(b != c);
 		}
 	}
 }
