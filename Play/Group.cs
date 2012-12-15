@@ -38,18 +38,15 @@ namespace Play
 			int n = data.Count;
 			bool has = false;
 			bool was = false;
-			for (int i = 0; i < n; i++)
-			{
-				var a = data[i];
+			for (int i = 0; i < n; i++) {
+				var a = data [i];
 				has = func(a);
-				if (has != was)
-				{
+				if (has != was) {
 					g.Add(i);
 				}
 				was = has;
 			}
-			if (was)
-			{
+			if (was) {
 				g.Add(n);
 			}
 			return g;
@@ -69,31 +66,28 @@ namespace Play
 		/// </param>
 		public static Group Filter(Group g, IsTrueByIndex func)
 		{
-			if (g == null) return null;
+			if (g == null)
+				return null;
 
 			Group res = new Group();
 			bool was = false;
 			bool has = false;
-			int n = g.Count/2;
-			for (int i = 0; i < n; i++)
-			{
+			int n = g.Count / 2;
+			for (int i = 0; i < n; i++) {
 				was = false;
 				has = false;
 
-				int start = g[i*2];
-				int end = g[i*2+1];
-				for (int j = start; j < end; j++)
-				{
+				int start = g [i * 2];
+				int end = g [i * 2 + 1];
+				for (int j = start; j < end; j++) {
 					has = func(j);
-					if (has != was)
-					{
+					if (has != was) {
 						res.Add(j);
 					}
 					was = has;
 				}
 
-				if (was)
-				{
+				if (was) {
 					res.Add(end);
 				}
 			}
@@ -101,7 +95,7 @@ namespace Play
 			return res;
 		}
 
-		public static Group operator * (Group a, IsTrueByIndex func)
+		public static Group operator *(Group a, IsTrueByIndex func)
 		{
 			return Group.Filter(a, func);
 		}
@@ -133,9 +127,8 @@ namespace Play
 		{
 			int size = 0;
 			int na = a.Count / 2;
-			for (int i = 0; i < na; i++)
-			{
-				size += a[i * 2 + 1] - a[i * 2];
+			for (int i = 0; i < na; i++) {
+				size += a [i * 2 + 1] - a [i * 2];
 			}
 			return size;
 		}
@@ -143,7 +136,8 @@ namespace Play
 		public int CompareTo(object obj)
 		{
 			// If the object is not a group, compare by size.
-			if (!(obj is Group)) return Group.Size(this).CompareTo(obj);
+			if (!(obj is Group))
+				return Group.Size(this).CompareTo(obj);
 
 			// Compare groups.
 			var a = this;
@@ -151,74 +145,89 @@ namespace Play
 			var na = a.Count;
 			var nb = b.Count;
 
-			if (na != nb) return na.CompareTo(nb);
+			if (na != nb)
+				return na.CompareTo(nb);
 
-			for (int i = 0; i < na; i++)
-			{
-				if (a[i] < b[i]) return -1;
-				if (a[i] > b[i]) return 1;
+			for (int i = 0; i < na; i++) {
+				if (a [i] < b [i])
+					return -1;
+				if (a [i] > b [i])
+					return 1;
 			}
 			return 0;
 		}
 
-		public static bool operator < (Group a, int n)
+		public static bool operator <(Group a, int n)
 		{
 			return a.CompareTo(n) < 0;
 		}
 
-		public static bool operator < (Group a, Group b)
+		public static bool operator <(Group a, Group b)
 		{
 			return a.CompareTo(b) < 0;
 		}
 
-		public static bool operator > (Group a, int n)
+		public static bool operator >(Group a, int n)
 		{
 			return a.CompareTo(n) > 0;
 		}
 
-		public static bool operator > (Group a, Group b)
+		public static bool operator >(Group a, Group b)
 		{
 			return a.CompareTo(b) > 0;
 		}
 
-		public static bool operator <= (Group a, int n)
+		public static bool operator <=(Group a, int n)
 		{
 			return a.CompareTo(n) <= 0;
 		}
 
-		public static bool operator <= (Group a, Group b)
+		public static bool operator <=(Group a, Group b)
 		{
 			return a.CompareTo(b) <= 0;
 		}
 
-		public static bool operator >= (Group a, int n)
+		public static bool operator >=(Group a, int n)
 		{
 			return a.CompareTo(n) >= 0;
 		}
 
-		public static bool operator >= (Group a, Group b)
+		public static bool operator >=(Group a, Group b)
 		{
 			return a.CompareTo(b) >= 0;
 		}
 
-		public static bool operator == (Group a, int n)
+		public static bool operator ==(Group a, int n)
 		{
 			return a.CompareTo(n) == 0;
 		}
 
-		public static bool operator == (Group a, Group b)
+		public static bool operator ==(Group a, Group b)
 		{
 			return a.CompareTo(b) == 0;
 		}
 
-		public static bool operator != (Group a, int n)
+		public static bool operator !=(Group a, int n)
 		{
 			return a.CompareTo(n) != 0;
 		}
 
-		public static bool operator != (Group a, Group b)
+		public static bool operator !=(Group a, Group b)
 		{
 			return a.CompareTo(b) != 0;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is Group)
+				return this.CompareTo((Group)obj) == 0;
+
+			return this.CompareTo((int)obj) == 0;
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
 		}
 
 		// Returns true if the group is empty, which includes null.
@@ -246,28 +255,26 @@ namespace Play
 			bool was = false;
 			bool has = false;
 			int pa, pb, min;
-			while (i < alength && j < blength)
-			{
+			while (i < alength && j < blength) {
 				// Get the last value from each group.
-				pa = i >= alength ? int.MaxValue : a[i];
-				pb = j >= blength ? int.MaxValue : b[j];
+				pa = i >= alength ? int.MaxValue : a [i];
+				pb = j >= blength ? int.MaxValue : b [j];
 				min = pa < pb ? pa : pb;
 
 				// Advance the one with least value, both if they got the same.
-				if (pa == min) 
-				{
+				if (pa == min) {
 					isA = !isA; 
 					i++;
 				}
-				if (pb == min)
-				{
+				if (pb == min) {
 					isB = !isB;
 					j++;
 				}
 
 				// Find out if the new change should be added to the result.
 				has = isA && isB;
-				if (has != was) arr.Add(min);
+				if (has != was)
+					arr.Add(min);
 
 				was = has;
 			}
@@ -295,14 +302,12 @@ namespace Play
 			if (a_length == 0 && b_length == 0)
 				return list;
 
-			if (a_length == 0)
-			{
+			if (a_length == 0) {
 				list.AddRange(b);
 				
 				return list;
 			}
-			if (b_length == 0)
-			{
+			if (b_length == 0) {
 				list.AddRange(a);
 				
 				return list;
@@ -314,28 +319,26 @@ namespace Play
 			bool was = false;
 			bool has = false;
 			int pa, pb, min;
-			while (i < a_length || j < b_length)
-			{
+			while (i < a_length || j < b_length) {
 				// Get the least value.
-				pa = i >= a_length ? int.MaxValue : a[i];
-				pb = j >= b_length ? int.MaxValue : b[j];
+				pa = i >= a_length ? int.MaxValue : a [i];
+				pb = j >= b_length ? int.MaxValue : b [j];
 				min = pa < pb ? pa : pb;
 
 				// Advance the least value, both if both are equal.
-				if (pa == min)
-				{
+				if (pa == min) {
 					isA = !isA;
 					i++;
 				}
-				if (pb == min)
-				{
+				if (pb == min) {
 					isB = !isB;
 					j++;
 				}
 
 				// Add to result if this changes the truth value.
 				has = isA || isB;
-				if (has != was) list.Add(min);
+				if (has != was)
+					list.Add(min);
 				
 				was = isA || isB;
 			}
@@ -357,8 +360,7 @@ namespace Play
 		{
 			int a_length = a.Count;
 			int b_length = b.Count;
-			if (b_length == 0)
-			{
+			if (b_length == 0) {
 				Group c = new Group(a.ToArray());
 				return c;
 			}
@@ -374,28 +376,26 @@ namespace Play
 			bool was = false;
 			bool has = false;
 			int pa, pb, min; 
-			while (i < a_length)
-			{
+			while (i < a_length) {
 				// Get the last value from each group.
-				pa = i >= a_length ? int.MaxValue : a[i];
-				pb = j >= b_length ? int.MaxValue : b[j];
+				pa = i >= a_length ? int.MaxValue : a [i];
+				pb = j >= b_length ? int.MaxValue : b [j];
 				min = pa < pb ? pa : pb;
 
 				// Advance the group with least value, both if they are equal.
-				if (pa == min)
-				{
+				if (pa == min) {
 					isA = !isA;
 					i++;
 				}
-				if (pb == min)
-				{
+				if (pb == min) {
 					isB = !isB;
 					j++;
 				}
 
 				// If it changes the truth value, add to result.
 				has = isA && !isB;
-				if (has != was) arr.Add(min);
+				if (has != was)
+					arr.Add(min);
 
 				was = has;
 			}
@@ -429,7 +429,7 @@ namespace Play
 		/// </param>
 		public static Group Slice(int start, int end)
 		{
-			var g = new Group(new int[]{start, end+1});
+			var g = new Group(new int[]{start, end + 1});
 			return g;
 		}
 
@@ -444,14 +444,24 @@ namespace Play
 		/// </typeparam>
 		public IEnumerable<T> Forward<T>(IList<T> list)
 		{
-			int n = this.Count/2;
-			for (int i = 0; i < n; i++)
-			{
-				int start = this[i*2];
-				int end = this[i*2+1];
-				for (int j = start; j < end; j++)
-				{
-					yield return list[j];
+			int n = this.Count / 2;
+			for (int i = 0; i < n; i++) {
+				int start = this [i * 2];
+				int end = this [i * 2 + 1];
+				for (int j = start; j < end; j++) {
+					yield return list [j];
+				}
+			}
+		}
+
+		public IEnumerable<int> ForwardIndex()
+		{
+			int n = this.Count / 2;
+			for (int i = 0; i < n; i++) {
+				int start = this [i * 2];
+				int end = this [i * 2 + 1];
+				for (int j = start; j < end; j++) {
+					yield return j;
 				}
 			}
 		}
@@ -467,16 +477,60 @@ namespace Play
 		/// </typeparam>
 		public IEnumerable<T> Backward<T>(IList<T> list)
 		{
-			int n = this.Count/2;
-			for (int i = n-1; i >= 0; i--)
-			{
-				int start = this[i*2];
-				int end = this[i*2+1];
-				for (int j = end-1; j >= start; j--)
-				{
-					yield return list[j];
+			int n = this.Count / 2;
+			for (int i = n-1; i >= 0; i--) {
+				int start = this [i * 2];
+				int end = this [i * 2 + 1];
+				for (int j = end-1; j >= start; j--) {
+					yield return list [j];
 				}
 			}
+		}
+
+		public IEnumerable<int> BackwardIndex()
+		{
+			int n = this.Count / 2;
+			for (int i = n-1; i >= 0; i--) {
+				int start = this [i * 2];
+				int end = this [i * 2 + 1];
+				for (int j = end-1; j >= start; j--) {
+					yield return j;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Finds the most similar group in a list of groups, searching using a filter.
+		/// Uses XOR Boolean operation to find the mismatch.
+		/// If two groups have equally mismatch the one with lower indices will be returned.
+		/// </summary>
+		/// <returns>
+		/// Returns a group that is the most similar to this group.
+		/// </returns>
+		/// <param name='groups'>
+		/// A list of groups to search for the similar.
+		/// </param>
+		/// <param name='filter'>
+		/// A filter to control which groups to search.
+		/// </param>
+		public int MostSimilar(IList<Group> groups, Group filter)
+		{
+			var minIndex = -1;
+			var minSize = int.MaxValue;
+			var minGroup = null as Group;
+			foreach (var i in filter.ForwardIndex()) {
+				var xor = (groups[i] - this) + (this - groups[i]);
+				var size = Group.Size(xor);
+				if (size > minSize) continue;
+				if (size != minSize || groups[i] < minGroup) {
+					minIndex = i;
+					minSize = size;
+					minGroup = groups[i];
+
+					if (minSize == 0) break;
+				}
+			}
+			return minIndex;
 		}
 	}
 

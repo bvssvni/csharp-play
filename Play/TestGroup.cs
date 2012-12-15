@@ -19,8 +19,8 @@ namespace Play
 
 			Group c = a * b;
 			Assert.AreEqual(2, c.Count);
-			Assert.AreEqual(5, c[0]);
-			Assert.AreEqual(10, c[1]);
+			Assert.AreEqual(5, c [0]);
+			Assert.AreEqual(10, c [1]);
 		}
 
 		[Test()]
@@ -49,8 +49,8 @@ namespace Play
 
 			Group c = a + b;
 			Assert.AreEqual(2, c.Count);
-			Assert.AreEqual(0, c[0]);
-			Assert.AreEqual(12, c[1]);
+			Assert.AreEqual(0, c [0]);
+			Assert.AreEqual(12, c [1]);
 		}
 
 		[Test()]
@@ -79,8 +79,8 @@ namespace Play
 			
 			Group c = a - b;
 			Assert.AreEqual(2, c.Count);
-			Assert.AreEqual(0, c[0]);
-			Assert.AreEqual(9, c[1]);
+			Assert.AreEqual(0, c [0]);
+			Assert.AreEqual(9, c [1]);
 		}
 
 		[Test()]
@@ -91,9 +91,9 @@ namespace Play
 			a += 0;
 			Assert.AreEqual(2, a.Count);
 			a += 0;
-			Assert.AreEqual(1, a[1]);
+			Assert.AreEqual(1, a [1]);
 			a += 1;
-			Assert.AreEqual(2, a[1]);
+			Assert.AreEqual(2, a [1]);
 		}
 
 		[Test()]
@@ -125,10 +125,9 @@ namespace Play
 			var arr = new int[] {0,1,2,3,4,5,6};
 			var g = Group.Slice(2, 4);
 			int j = 0;
-			foreach (int i in g.Forward<int>(arr))
-			{
+			foreach (int i in g.Forward<int>(arr)) {
 				Console.WriteLine(i.ToString());
-				Assert.True(i == arr[j+2]);
+				Assert.True(i == arr [j + 2]);
 				j++;
 			}
 		}
@@ -139,10 +138,9 @@ namespace Play
 			var arr = new int[] {0,1,2,3,4,5,6};
 			var g = Group.Slice(2, 4);
 			int j = 4;
-			foreach (int i in g.Backward<int>(arr))
-			{
+			foreach (int i in g.Backward<int>(arr)) {
 				Console.WriteLine(i.ToString());
-				Assert.True(i == arr[j]);
+				Assert.True(i == arr [j]);
 				j--;
 			}
 		}
@@ -151,25 +149,27 @@ namespace Play
 		public void TestFilter()
 		{
 			var g = new Group(new int[]{1,100});
-			g *= delegate (int i) {return i % 10 == 0;};
-			Assert.True(g[0] == 10);
-			Assert.True(g[1] == 11);
-			Assert.True(g[2] == 20);
-			Assert.True(g[3] == 21);
-			Assert.True(g[4] == 30);
-			Assert.True(g[5] == 31);
-			Assert.True(g[6] == 40);
-			Assert.True(g[7] == 41);
-			Assert.True(g[8] == 50);
-			Assert.True(g[9] == 51);
-			Assert.True(g[10] == 60);
-			Assert.True(g[11] == 61);
-			Assert.True(g[12] == 70);
-			Assert.True(g[13] == 71);
-			Assert.True(g[14] == 80);
-			Assert.True(g[15] == 81);
-			Assert.True(g[16] == 90);
-			Assert.True(g[17] == 91);
+			g *= delegate (int i) {
+				return i % 10 == 0;
+			};
+			Assert.True(g [0] == 10);
+			Assert.True(g [1] == 11);
+			Assert.True(g [2] == 20);
+			Assert.True(g [3] == 21);
+			Assert.True(g [4] == 30);
+			Assert.True(g [5] == 31);
+			Assert.True(g [6] == 40);
+			Assert.True(g [7] == 41);
+			Assert.True(g [8] == 50);
+			Assert.True(g [9] == 51);
+			Assert.True(g [10] == 60);
+			Assert.True(g [11] == 61);
+			Assert.True(g [12] == 70);
+			Assert.True(g [13] == 71);
+			Assert.True(g [14] == 80);
+			Assert.True(g [15] == 81);
+			Assert.True(g [16] == 90);
+			Assert.True(g [17] == 91);
 			Assert.True(g == 9);
 		}
 
@@ -185,6 +185,32 @@ namespace Play
 			Assert.True(b > c);
 			Assert.True(a >= c);
 			Assert.True(b != c);
+		}
+
+		[Test()]
+		public void TestMostSimilar()
+		{
+			var a = new Group(new int[]{5, 6});
+			var b = new Group(new int[]{4, 6});
+			var c = new Group(new int[]{5, 7});
+			var d = new Group(new int[]{0, 10});
+			var gr = new Group[]{b, c, d};
+			var all = Group.Slice(0, gr.Length-1);
+
+			var ind = a.MostSimilar(gr, all);
+			Assert.True(ind == 0);
+
+			gr = new Group[]{c, d, b};
+			ind = a.MostSimilar(gr, all);
+			Assert.True(ind == 2);
+
+			gr = new Group[]{d, b, c};
+			ind = a.MostSimilar(gr, all);
+			Assert.True(ind == 1);
+
+			gr = new Group[]{a, b, c, d};
+			ind = a.MostSimilar(gr, all);
+			Assert.True(ind == 0);
 		}
 	}
 }
