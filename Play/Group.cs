@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Play
 {
@@ -14,6 +15,17 @@ namespace Play
 
 		public Group(int[] array) : base(array)
 		{
+		}
+
+		public override string ToString()
+		{
+			var strb = new StringBuilder();
+			int n = this.Count;
+			for (int i = 0; i < n; i++) {
+				strb.Append(this[i].ToString());
+				if (i < n - 1) strb.Append(", ");
+			}
+			return strb.ToString();
 		}
 
 		/// <summary>
