@@ -1,17 +1,30 @@
 csharp-play
 ===========
 
-Data structures and useful methods for group-oriented programming. 
+Group-oriented programming for C#.  
 BSD licence.  
+For version log, see the individual files.  
 
-##Introduction to the concept of a "Group"
+##Motivation
 
-A Group is an object that is the same whether any two members swap their location.  
-It is very useful in advanced problem solving, such as text parsing or dealing with data.  
+A group is a selection of members in a list.  
+It can be efficiently computed using intervals.  
 
-In group-oriented programming, one thinks of data, such as arrays or lists,  
-as a group which can be partitioned into sub-groups.  
-Sub-groups share the same index space and can be composed into new sub-groups.  
+    {2, 4, 6, 8}
+    
+    Contains items from index 2 -> 4.
+    Contains items from index 6 -> 8.
 
-The challenge is to find the right proper sub-group for an action.  
-Once this is done, one can make algorithms more flexible by using a group as "filter".  
+This implementation uses operator overloading, so one can join two groups simply by writing:
+
+    var c = a + b
+    
+If you need the members that are in both groups, you can write:
+
+    var c = a * b
+    
+If you need the members in the first group but not in the second, write:
+
+    var c = a - b
+
+There are many applications of group, such as filtering, storage pre-computed values and advanced decision making.  
