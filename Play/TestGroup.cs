@@ -235,6 +235,19 @@ namespace Play
 			Assert.True(b == c);
 			Assert.True(d == e);
 		}
+
+		[Test()]
+		public void TestMaxMinLeap()
+		{
+			var a = new Group(new int[]{7, 9, 10, 20});
+			var b = a.MaxLeap();
+			var c = new Group(new int[]{0, 7});
+			var d = a.MinLeap();
+			var e = new Group(new int[]{9, 10});
+
+			Assert.True(b == c);
+			Assert.True(d == e);
+		}
 	}
 }
 

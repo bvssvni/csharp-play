@@ -2,8 +2,8 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Play/Group.cs">
     <Files>
-      <File FileName="Play/Group.cs" Line="22" Column="26" />
-      <File FileName="Play/TestGroup.cs" Line="216" Column="11" />
+      <File FileName="Play/Group.cs" Line="79" Column="50" />
+      <File FileName="Play/TestGroup.cs" Line="236" Column="24" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">

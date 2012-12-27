@@ -73,6 +73,35 @@ namespace Play
 		}
 
 		/// <summary>
+		/// Finds the maximum leap, starting at 0.
+		/// </summary>
+		/// <returns>
+		/// Returns the maximum leap in group.
+		/// </returns>
+		public Group MaxLeap()
+		{
+			int max = int.MinValue;
+			int maxStart = 0;
+			int maxEnd = 0;
+			int n = this.Count/2;
+			for (int i = 0; i < n; i++) {
+				int j = 2*i - 1;
+				int start = j < 0 ? 0 : this[j];
+				int end = this[2*i];
+				int interval = end - start;
+				if (interval > max) {
+					max = interval;
+					maxStart = start;
+					maxEnd = end;
+				}
+			}
+			
+			if (max == int.MinValue) return null;
+			
+			return new Group(new int[]{maxStart, maxEnd});
+		}
+
+		/// <summary>
 		/// Finds the smallest interval in the group.
 		/// </summary>
 		/// <returns>
@@ -97,6 +126,35 @@ namespace Play
 
 			if (min == int.MaxValue) return null;
 
+			return new Group(new int[]{minStart, minEnd});
+		}
+
+		/// <summary>
+		/// Finds the minimum leap, starting at 0.
+		/// </summary>
+		/// <returns>
+		/// The minimum leap in group.
+		/// </returns>
+		public Group MinLeap()
+		{
+			int min = int.MaxValue;
+			int minStart = 0;
+			int minEnd = 0;
+			int n = this.Count/2;
+			for (int i = 0; i < n; i++) {
+				int j = 2*i-1;
+				int start = j < 0 ? 0 : this[j];
+				int end = this[2*i];
+				int interval = end - start;
+				if (interval < min) {
+					min = interval;
+					minStart = start;
+					minEnd = end;
+				}
+			}
+			
+			if (min == int.MaxValue) return null;
+			
 			return new Group(new int[]{minStart, minEnd});
 		}
 
