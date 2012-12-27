@@ -222,6 +222,19 @@ namespace Play
 
 			Assert.True(b == c);
 		}
+
+		[Test()]
+		public void TestMaxMinInterval()
+		{
+			var a = new Group(new int[]{0, 3, 4, 12});
+			var b = a.MaxInterval();
+			var c = new Group(new int[]{4, 12});
+			var d = a.MinInterval();
+			var e = new Group(new int[]{0, 3});
+
+			Assert.True(b == c);
+			Assert.True(d == e);
+		}
 	}
 }
 

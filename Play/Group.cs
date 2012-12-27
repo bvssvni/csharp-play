@@ -44,6 +44,62 @@ namespace Play
 			}, data);
 		}
 
+		/// <summary>
+		/// Finds the largest interval in the group.
+		/// </summary>
+		/// <returns>
+		/// The largest interval in the group.
+		/// </returns>
+		public Group MaxInterval()
+		{
+			int max = int.MinValue;
+			int maxStart = 0;
+			int maxEnd = 0;
+			int n = this.Count/2;
+			for (int i = 0; i < n; i++) {
+				int start = this[2*i];
+				int end = this[2*i+1];
+				int interval = end - start;
+				if (interval > max) {
+					max = interval;
+					maxStart = start;
+					maxEnd = end;
+				}
+			}
+
+			if (max == int.MinValue) return null;
+
+			return new Group(new int[]{maxStart, maxEnd});
+		}
+
+		/// <summary>
+		/// Finds the smallest interval in the group.
+		/// </summary>
+		/// <returns>
+		/// Returns the smallest interval in the group.
+		/// </returns>
+		public Group MinInterval()
+		{
+			int min = int.MaxValue;
+			int minStart = 0;
+			int minEnd = 0;
+			int n = this.Count/2;
+			for (int i = 0; i < n; i++) {
+				int start = this[2*i];
+				int end = this[2*i+1];
+				int interval = end - start;
+				if (interval < min) {
+					min = interval;
+					minStart = start;
+					minEnd = end;
+				}
+			}
+
+			if (min == int.MaxValue) return null;
+
+			return new Group(new int[]{minStart, minEnd});
+		}
+
 		public delegate bool IsTrue<T>(T item);
 
 		/// <summary>
