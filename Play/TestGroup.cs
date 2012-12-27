@@ -212,6 +212,16 @@ namespace Play
 			ind = a.MostSimilar(gr, all);
 			Assert.True(ind == 0);
 		}
+
+		[Test()]
+		public void TestBoolSamples()
+		{
+			var a = new bool[]{true, true, false, false, true, true};
+			var b = Group.FromBoolSamples(a);
+			var c = new Group(new int[]{0, 2, 4, 6});
+
+			Assert.True(b == c);
+		}
 	}
 }
 

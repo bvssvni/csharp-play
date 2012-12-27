@@ -16,6 +16,22 @@ namespace Play
 		{
 		}
 
+		/// <summary>
+		/// Creates a group using boolean samples of data.
+		/// </summary>
+		/// <returns>
+		/// A group describing the truth intervals in the samples.
+		/// </returns>
+		/// <param name='data'>
+		/// Data.
+		/// </param>
+		public static Group FromBoolSamples(bool[] data, bool invert = false)
+		{
+			return Predicate<bool>(delegate(bool item) {
+				return item ^ invert;
+			}, data);
+		}
+
 		public delegate bool IsTrue<T>(T item);
 
 		/// <summary>

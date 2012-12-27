@@ -1,15 +1,15 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Play/Group.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Play/TestGroup.cs">
     <Files>
-      <File FileName="Play/Group.cs" Line="234" Column="35" />
-      <File FileName="Play/TestGroup.cs" Line="182" Column="4" />
+      <File FileName="Play/Group.cs" Line="505" Column="87" />
+      <File FileName="Play/TestGroup.cs" Line="210" Column="4" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Play" expanded="True">
-            <Node name="Group.cs" selected="True" />
+            <Node name="TestGroup.cs" selected="True" />
           </Node>
         </State>
       </Pad>
