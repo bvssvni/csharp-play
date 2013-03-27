@@ -36,8 +36,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Group.cs" />
-    <Compile Include="TestGroup.cs" />
+    <Compile Include="Objects\Group.cs" />
+    <Compile Include="Tests\TestGroup.cs" />
+    <Compile Include="Objects\Generator.cs" />
+    <Compile Include="Modules\LinearGeneratorModule.cs" />
+    <Compile Include="Tests\TestGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -50,4 +53,9 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="Objects\" />
+    <Folder Include="Tests\" />
+    <Folder Include="Modules\" />
+  </ItemGroup>
 </Project>
