@@ -1,5 +1,5 @@
 /*
-Play - Group-oriented programming for C#.  
+Group - Group-oriented programming for C#.  
 BSD license.  
 by Sven Nilsen, 2012  
 http://www.cutoutpro.com  
@@ -40,13 +40,21 @@ namespace Play
 	{
 		public Group()
 		{
-
+			
 		}
-
+		
 		public Group(int[] array) : base(array)
 		{
 		}
-
+		
+		public Group (Group copyFrom) : base(copyFrom.ToArray())
+		{
+		}
+		
+		public Group (int capacity) : base(capacity)
+		{
+		}
+		
 		public override string ToString()
 		{
 			var strb = new StringBuilder();
@@ -57,7 +65,7 @@ namespace Play
 			}
 			return strb.ToString();
 		}
-
+		
 		/// <summary>
 		/// Creates a group using boolean samples of data.
 		/// </summary>
@@ -67,13 +75,76 @@ namespace Play
 		/// <param name='data'>
 		/// Data.
 		/// </param>
-		public static Group FromBoolSamples(bool[] data, bool invert = false)
+		public static Group FromBoolSamples (bool[] data, bool invert = false)
 		{
 			return Predicate<bool>(delegate(bool item) {
 				return item ^ invert;
 			}, data);
 		}
-
+		
+		/// <summary>
+		/// Creates a group from an ordered map.
+		/// 
+		/// The indices in the map has to increase.
+		/// Gaps are added to the group when one index differs more from the previous than 1.
+		/// </summary>
+		/// <returns>
+		/// Returns a group corresponding to a sorted map.
+		/// </returns>
+		/// <param name='map'>
+		/// The ordered map to create group from.
+		/// </param>
+		public static Group FromOrderedMap (int[] map)
+		{
+			var g = new Group();
+			int n = map.Length;
+			int last = map[0];
+			g.Add (last);
+			for (int i = 1; i < n; i++) {
+				if (map[i] != last + 1) {
+					g.Add (last);
+					g.Add (map[i]); 
+				}
+				last = map[i];
+			}
+			if ((g.Count & 1) == 1) g.Add (map[map.Length-1] + 1);
+			
+			return g;
+		}
+		
+		/// <summary>
+		/// Creates a group by examining each possibility in a potential.
+		/// A potential is an interval where each index represents a state.
+		/// Usually this is very simple structures, because the space grows rapidly.
+		/// </summary>
+		/// <returns>
+		/// Returns the group where all members are possibilities where the condition is true.
+		/// </returns>
+		/// <param name='first'>
+		/// The first index in the potential.
+		/// </param>
+		/// <param name='last'>
+		/// The last index in the potential.
+		/// </param>
+		/// <param name='f'>
+		/// A function that returns true or false for each possible state.
+		/// </param>
+		public static Group FromPotential(int first, int last, IsTrue<int> f)
+		{
+			var g = new Group();
+			bool was = false;
+			bool has = false;
+			for (int i = first; i <= last; i++) {
+				has = f(i);
+				if (has != was) g.Add (i);
+				
+				was = has;
+			}
+			if ((g.Count & 1) == 1) g.Add (last+1);
+			
+			return g;
+		}
+		
 		/// <summary>
 		/// Finds the largest interval in the group.
 		/// </summary>
@@ -96,12 +167,12 @@ namespace Play
 					maxEnd = end;
 				}
 			}
-
+			
 			if (max == int.MinValue) return null;
-
+			
 			return new Group(new int[]{maxStart, maxEnd});
 		}
-
+		
 		/// <summary>
 		/// Finds the maximum leap, starting at 0.
 		/// </summary>
@@ -130,7 +201,7 @@ namespace Play
 			
 			return new Group(new int[]{maxStart, maxEnd});
 		}
-
+		
 		/// <summary>
 		/// Finds the smallest interval in the group.
 		/// </summary>
@@ -153,12 +224,12 @@ namespace Play
 					minEnd = end;
 				}
 			}
-
+			
 			if (min == int.MaxValue) return null;
-
+			
 			return new Group(new int[]{minStart, minEnd});
 		}
-
+		
 		/// <summary>
 		/// Finds the minimum leap, starting at 0.
 		/// </summary>
@@ -187,9 +258,9 @@ namespace Play
 			
 			return new Group(new int[]{minStart, minEnd});
 		}
-
+		
 		public delegate bool IsTrue<T>(T item);
-
+		
 		/// <summary>
 		/// A predicate is a function that returns true or false.
 		/// This method constructs a group from feeding a function one by one with data.
@@ -223,9 +294,9 @@ namespace Play
 			}
 			return g;
 		}
-
+		
 		public delegate bool IsTrueByIndex(int index);
-
+		
 		/// <summary>
 		/// Creates a group filtered by a function using the index as argument.
 		/// Use closures to access data in addition to the index.
@@ -240,7 +311,7 @@ namespace Play
 		{
 			if (g == null)
 				return null;
-
+			
 			Group res = new Group();
 			bool was = false;
 			bool has = false;
@@ -248,7 +319,7 @@ namespace Play
 			for (int i = 0; i < n; i++) {
 				was = false;
 				has = false;
-
+				
 				int start = g [i * 2];
 				int end = g [i * 2 + 1];
 				for (int j = start; j < end; j++) {
@@ -258,20 +329,87 @@ namespace Play
 					}
 					was = has;
 				}
-
+				
 				if (was) {
 					res.Add(end);
 				}
 			}
-
+			
 			return res;
 		}
-
+		
+		/// <summary>
+		/// Creates a group that consists of the heads of the argument.
+		/// For each interval in this group, the first interval of the other group is added.
+		/// This is useful in parsing when you are interested in the term following a specific condition.
+		/// </summary>
+		/// <returns>Returns group with heads.</returns>
+		/// <param name="g">The group to get heads from.</param>
+		public Group HeadsOf (Group g)
+		{
+			Group res = new Group ();
+			int n = this.Count >> 1;
+			int j = 0;
+			int m = g.Count >> 1;
+			for (int i = 0; i < n; i++) {
+				int start = this[i << 1];
+				int end = this[(i << 1) + 1];
+				
+				while (j < m && g[j << 1] < end) {
+					j++;
+				}
+				
+				if (j >= m) break;
+				
+				start = g[j << 1];
+				end = g[(j << 1) + 1];
+				res.Add (start);
+				res.Add (end);
+			}
+			
+			return res;
+		}
+		
+		/// <summary>
+		/// Creates a group that consists of the tail of the argument.
+		/// For each interval in this group, the last interval before from the other group is added.
+		/// This is useful in parsing when you are interested in the term before a condition.
+		/// </summary>
+		/// <returns>Returns group with lasts.</returns>
+		/// <param name="g">The group to get last from.</param>
+		public Group LastsOf (Group g)
+		{
+			Group res = new Group ();
+			int n = this.Count >> 1;
+			int m = g.Count >> 1;
+			int j = m - 1;
+			for (int i = n-1; i >= 0; i--) {
+				int start = this[i << 1];
+				int end = this[(i << 1) + 1];
+				
+				while (j >= 0 && g[(j << 1) + 1] > start) {
+					j--;
+				}
+				
+				if (j < 0) break;
+				
+				start = g[j << 1];
+				end = g[(j << 1) + 1];
+				res.Add (end);
+				res.Add (start);
+			}
+			res.Reverse ();
+			
+			return res;
+		}
+		
+		
+		
 		public static Group operator *(Group a, IsTrueByIndex func)
 		{
 			return Group.Filter(a, func);
 		}
-
+		
 		/// <summary>
 		/// Adds a member to a group.
 		/// </summary>
@@ -288,38 +426,51 @@ namespace Play
 			b.Add(id + 1);
 			return a + b;
 		}
-
+		
 		public static Group operator +(Group a, int id)
 		{
 			return Group.Add(a, id);
 		}
-
+		
+		public static Group Subtract(Group a, int id)
+		{
+			var b = new Group();
+			b.Add (id);
+			b.Add (id + 1);
+			return a - b;
+		}
+		
+		public static Group operator -(Group a, int id)
+		{
+			return Group.Subtract (a, id);
+		}
+		
 		// Returns the number of members in the group.
+		// cl 29.
 		public static int Size(Group a)
 		{
 			int size = 0;
-			int na = a.Count / 2;
-			for (int i = 0; i < na; i++) {
-				size += a [i * 2 + 1] - a [i * 2];
-			}
+			int n = a.Count - 1;
+			for (int i = 0; i < n; i += 2) size += a[i+1] - a[i];
+			
 			return size;
 		}
-
+		
 		public int CompareTo(object obj)
 		{
 			// If the object is not a group, compare by size.
 			if (!(obj is Group))
 				return Group.Size(this).CompareTo(obj);
-
+			
 			// Compare groups.
 			var a = this;
 			var b = (Group)obj;
 			var na = a.Count;
 			var nb = b.Count;
-
+			
 			if (na != nb)
 				return na.CompareTo(nb);
-
+			
 			for (int i = 0; i < na; i++) {
 				if (a [i] < b [i])
 					return -1;
@@ -328,99 +479,31 @@ namespace Play
 			}
 			return 0;
 		}
-
-		public static bool operator <(Group a, int n)
-		{
-			return a.CompareTo(n) < 0;
-		}
-
-		public static bool operator <(Group a, Group b)
-		{
-			return a.CompareTo(b) < 0;
-		}
-
-		public static bool operator >(Group a, int n)
-		{
-			return a.CompareTo(n) > 0;
-		}
-
-		public static bool operator >(Group a, Group b)
-		{
-			return a.CompareTo(b) > 0;
-		}
-
-		public static bool operator <=(Group a, int n)
-		{
-			return a.CompareTo(n) <= 0;
-		}
-
-		public static bool operator <=(Group a, Group b)
-		{
-			return a.CompareTo(b) <= 0;
-		}
-
-		public static bool operator >=(Group a, int n)
-		{
-			return a.CompareTo(n) >= 0;
-		}
-
-		public static bool operator >=(Group a, Group b)
-		{
-			return a.CompareTo(b) >= 0;
-		}
-
-		public static bool operator ==(Group a, int n)
-		{
-			return a.CompareTo(n) == 0;
-		}
-
-		public static bool operator ==(Group a, Group b)
-		{
-			return a.CompareTo(b) == 0;
-		}
-
-		public static bool operator !=(Group a, int n)
-		{
-			return a.CompareTo(n) != 0;
-		}
-
-		public static bool operator !=(Group a, Group b)
-		{
-			return a.CompareTo(b) != 0;
-		}
-
-		public override bool Equals(object obj)
-		{
-			if (obj is Group)
-				return this.CompareTo((Group)obj) == 0;
-
-			return this.CompareTo((int)obj) == 0;
-		}
-
+		
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();
 		}
-
+		
 		// Returns true if the group is empty, which includes null.
 		public static bool IsEmpty(Group a)
 		{
 			if (a == null || a.Count == 0)
 				return true;
-
+			
 			return false;
 		}
-
+		
 		// Intersects two groups and creates a new one.
 		public static Group Intersect(Group a, Group b)
 		{
 			Group arr = new Group();
-
+			
 			int alength = a.Count;
 			int blength = b.Count;
 			if (alength == 0 || blength == 0)
 				return arr;
-
+			
 			int i = 0, j = 0; 
 			bool isA = false; 
 			bool isB = false; 
@@ -432,7 +515,7 @@ namespace Play
 				pa = i >= alength ? int.MaxValue : a [i];
 				pb = j >= blength ? int.MaxValue : b [j];
 				min = pa < pb ? pa : pb;
-
+				
 				// Advance the one with least value, both if they got the same.
 				if (pa == min) {
 					isA = !isA; 
@@ -442,18 +525,18 @@ namespace Play
 					isB = !isB;
 					j++;
 				}
-
+				
 				// Find out if the new change should be added to the result.
 				has = isA && isB;
 				if (has != was)
 					arr.Add(min);
-
+				
 				was = has;
 			}
 			
 			return arr;
 		}
-
+		
 		/// <summary>
 		/// Creates a union of 'a'  and 'b'.
 		/// The returned group contains all members of 'a' and 'b'.
@@ -467,13 +550,13 @@ namespace Play
 		public static Group Union(Group a, Group b)
 		{
 			Group list = new Group();
-
+			
 			int a_length = a.Count;
 			int b_length = b.Count;
-
+			
 			if (a_length == 0 && b_length == 0)
 				return list;
-
+			
 			if (a_length == 0) {
 				list.AddRange(b);
 				
@@ -484,7 +567,7 @@ namespace Play
 				
 				return list;
 			}
-
+			
 			int i = 0, j = 0; 
 			bool isA = false; 
 			bool isB = false; 
@@ -496,7 +579,7 @@ namespace Play
 				pa = i >= a_length ? int.MaxValue : a [i];
 				pb = j >= b_length ? int.MaxValue : b [j];
 				min = pa < pb ? pa : pb;
-
+				
 				// Advance the least value, both if both are equal.
 				if (pa == min) {
 					isA = !isA;
@@ -506,7 +589,7 @@ namespace Play
 					isB = !isB;
 					j++;
 				}
-
+				
 				// Add to result if this changes the truth value.
 				has = isA || isB;
 				if (has != was)
@@ -517,7 +600,7 @@ namespace Play
 			
 			return list;
 		}
-	
+		
 		// Removes all members of _b_ from group _a_.
 		/// <summary>
 		/// Creates a group that contains member of 'a' but not 'b'.
@@ -536,7 +619,7 @@ namespace Play
 				Group c = new Group(a.ToArray());
 				return c;
 			}
-
+			
 			Group arr = new Group();
 			
 			if (a_length == 0 || b_length == 0)
@@ -553,7 +636,7 @@ namespace Play
 				pa = i >= a_length ? int.MaxValue : a [i];
 				pb = j >= b_length ? int.MaxValue : b [j];
 				min = pa < pb ? pa : pb;
-
+				
 				// Advance the group with least value, both if they are equal.
 				if (pa == min) {
 					isA = !isA;
@@ -563,33 +646,33 @@ namespace Play
 					isB = !isB;
 					j++;
 				}
-
+				
 				// If it changes the truth value, add to result.
 				has = isA && !isB;
 				if (has != was)
 					arr.Add(min);
-
+				
 				was = has;
 			}
 			
 			return arr;
 		}
-
+		
 		public static Group operator +(Group a, Group b)
 		{
 			return Group.Union(a, b);
 		}
-
+		
 		public static Group operator *(Group a, Group b)
 		{
 			return Group.Intersect(a, b);
 		}
-
+		
 		public static Group operator -(Group a, Group b)
 		{
 			return Group.Subtract(a, b);
 		}
-
+		
 		/// <summary>
 		/// Returns a group that contains the indices from 'start' including 'end'.
 		/// </summary>
@@ -601,10 +684,21 @@ namespace Play
 		/// </param>
 		public static Group Slice(int start, int end)
 		{
+			if (start > end) {
+				// Swap to get correct order.
+				var tmp = start;
+				start = end;
+				end = tmp;
+			}
 			var g = new Group(new int[]{start, end + 1});
 			return g;
 		}
-
+		
+		public static Group All(System.Collections.IList list)
+		{
+			return new Group(new int[]{0, list.Count});
+		}
+		
 		/// <summary>
 		/// Returns an enumerator iterating forward a list.
 		/// </summary>
@@ -625,8 +719,14 @@ namespace Play
 				}
 			}
 		}
-
-		public IEnumerable<int> ForwardIndex()
+		
+		/// <summary>
+		/// Iterates through the indices in group forward.
+		/// </summary>
+		/// <returns>
+		/// The indices.
+		/// </returns>
+		public IEnumerable<int> IndicesForward()
 		{
 			int n = this.Count / 2;
 			for (int i = 0; i < n; i++) {
@@ -637,7 +737,7 @@ namespace Play
 				}
 			}
 		}
-
+		
 		/// <summary>
 		/// Returns an enumerator iterating backward a list.
 		/// </summary>
@@ -658,8 +758,14 @@ namespace Play
 				}
 			}
 		}
-
-		public IEnumerable<int> BackwardIndex()
+		
+		/// <summary>
+		/// Iterates through the indices in the group backwards.
+		/// </summary>
+		/// <returns>
+		/// The indices.
+		/// </returns>
+		public IEnumerable<int> IndicesBackward()
 		{
 			int n = this.Count / 2;
 			for (int i = n-1; i >= 0; i--) {
@@ -670,7 +776,106 @@ namespace Play
 				}
 			}
 		}
-
+		
+		
+		/// <summary>
+		/// Converts from an internal index within the group to external.
+		/// If it is outside the group, -1 is returned.
+		/// 
+		/// This method might be slow when called for each member of a group.
+		/// A more efficient way is using the 'Map()' function.
+		/// </summary>
+		/// <param name='internalIndex'>
+		/// The internal index to convert to external.
+		/// </param>
+		public int External(int internalIndex)
+		{
+			int n = this.Count / 2;
+			for (int i = 0; i < n; i++) {
+				int start = this[i*2];
+				int end = this[i*2 + 1];
+				if (internalIndex < 0) return -1;
+				if (internalIndex < end - start) {
+					return internalIndex + start;
+				} else {
+					internalIndex -= end - start;
+				}
+			}
+			return -1;
+		}
+		
+		/// <summary>
+		/// Converts from an external index to an index internal to the group.
+		/// If it is outside the group, -1 is returned.
+		/// </summary>
+		/// <param name='externalIndex'>
+		/// The external index.
+		/// </param>
+		public int Internal(int externalIndex)
+		{
+			int n = this.Count / 2;
+			int c = 0;
+			for (int i = 0; i < n; i++) {
+				int invEnd = i == 0 ? 0 : this[i*2 - 1];
+				int start = this[i*2];
+				int end = this[i*2 + 1];
+				c += start - invEnd;
+				
+				if (externalIndex < start) return -1;
+				if (externalIndex < end) return externalIndex - c;
+				
+			}
+			return -1;
+		}
+		
+		public bool ContainsIndex(int index)
+		{
+			int larger = this.BinarySearch(index);
+			if (larger >= 0) {
+				return (larger % 2) == 0;
+			} else {
+				return (~larger % 2) == 1;
+			}
+		}
+		
+		/// <summary>
+		/// Finds the first group that contains an item.
+		/// </summary>
+		/// <param name='groups'>
+		/// The groups to search for item.
+		/// </param>
+		/// <param name='item'>
+		/// The item to search for.
+		/// </param>
+		public static int First(IList<Group> groups, int item)
+		{
+			int n = groups.Count;
+			for (int i = 0; i < n; i++) {
+				if (groups[i].ContainsIndex(item)) return i;
+			}
+			
+			return -1;
+		}
+		
+		/// <summary>
+		/// Finds the last group that contains an item.
+		/// </summary>
+		/// <param name='groups'>
+		/// The groups to search for item.
+		/// </param>
+		/// <param name='item'>
+		/// The item to search for.
+		/// </param>
+		public static int Last(IList<Group> groups, int item)
+		{
+			int n = groups.Count;
+			for (int i = n-1; i >= 0; i--) {
+				if (groups[i].ContainsIndex(item)) return i;
+			}
+			
+			return -1;
+		}
+		
 		/// <summary>
 		/// Finds the most similar group in a list of groups, searching using a filter.
 		/// Uses XOR Boolean operation to find the mismatch.
@@ -690,21 +895,235 @@ namespace Play
 			var minIndex = -1;
 			var minSize = int.MaxValue;
 			var minGroup = null as Group;
-			foreach (var i in filter.ForwardIndex()) {
+			foreach (var i in filter.IndicesForward()) {
 				var xor = (groups[i] - this) + (this - groups[i]);
 				var size = Group.Size(xor);
 				if (size > minSize) continue;
-				if (size != minSize || groups[i] < minGroup) {
+				if (size != minSize || groups[i].CompareTo(minGroup) < 0) {
 					minIndex = i;
 					minSize = size;
 					minGroup = groups[i];
-
+					
 					if (minSize == 0) break;
 				}
 			}
 			return minIndex;
 		}
+		
+		public int[] ToIndices()
+		{
+			var size = Group.Size (this);
+			var arr = new int[size];
+			int j = 0;
+			foreach (var i in this.IndicesForward()) {
+				arr[j++] = i;
+			}
+			return arr;
+		}
+		
+		/// <summary>
+		/// Creates an array that maps internal indices of a group to external indices.
+		/// This can be used for random access of members in a group.
+		/// Since it only maps indices, it allows writing to the original array or list.
+		/// The returned map is always ordered.
+		/// 
+		/// 	arr[map[i]]
+		/// 
+		/// </summary>
+		public int[] Map()
+		{
+			int size = Group.Size (this);
+			int[] map = new int[size];
+			int n = this.Count / 2;
+			int j = 0;
+			for (int i = 0; i < n; i++) {
+				int start = this[i*2];
+				int end = this[i*2 + 1];
+				for (int k = start; k < end; k++) {
+					map[j++] = k;
+				}
+			}
+			return map;
+		}
+		
+		/// <summary>
+		/// Creates an array that maps chunks in a group to external indices.
+		/// Each chunk needs to be continious and cover the whole group.
+		/// If they are not, an exception will be thrown.
+		/// 
+		/// This can be used when parsing words of same size from a text.
+		/// </summary>
+		/// <returns>The chunk.</returns>
+		/// <param name="chunkSize">Chunk size.</param>
+		public int[] MapChunks(int chunkSize)
+		{
+			int size = Group.Size (this);
+			int[] map = new int[size];
+			int n = this.Count / 2;
+			int j = 0;
+			for (int i = 0; i < n; i++) {
+				int start = this[i*2];
+				int end = this[i*2 + 1];
+				if ((end - start) % chunkSize != 0) throw new Exception ("Group not divisible into chunks.");
+				
+				for (int k = start; k < end; k += chunkSize) {
+					map[j++] = k;
+				}
+			}
+			return map;
+		}
+		
+		/// <summary>
+		/// Creates an array of items that are member of the group.
+		/// The items are specified using a list as parameter.
+		/// 
+		/// This method can be used when a function takes an array as arguments but doesn't allow group as filter.
+		/// Notice that writing to a such array does not affect the original.
+		/// </summary>
+		/// <returns>
+		/// Returns an array of members mapped from list.
+		/// </returns>
+		/// <param name='list'>
+		/// The list containing members.
+		/// </param>
+		/// <typeparam name='T'>
+		/// The type of items.
+		/// </typeparam>
+		public T[] MapTo<T>(IList<T> list)
+		{
+			int size = Group.Size (this);
+			T[] map = new T[size];
+			int n = this.Count / 2;
+			int j = 0;
+			for (int i = 0; i < n; i++) {
+				int start = this[i*2];
+				int end = this[i*2 + 1];
+				for (int k = start; k < end; k++) {
+					map[j++] = list[k];
+				}
+			}
+			return map;
+		}
+		
+		/// <summary>
+		/// Creates a map within the internal space of group g.
+		/// 
+		/// This can be used when data is mapped by a group and you want to create
+		/// groups that preserve the same relationship order to each other.
+		/// 
+		/// The ordered of all groups mapped with a group is preserved,
+		/// but the indices changes and members outside the group is removed.
+		/// 
+		/// cl 24.
+		/// </summary>
+		/// <returns>
+		/// Returns an array mapping indices of this group into the internal space of g.
+		/// </returns>
+		/// <param name='g'>
+		/// The group to map with.
+		/// </param>
+		public int[] MapWith(Group g)
+		{
+			var c = g * this;
+			int minSize = Group.Size (c);
+			int[] map = new int[minSize];
+			int n = g.Count >> 1;
+			int m = this.Count;
+			int j = 0;
+			int s = 0;
+			int t = 0;
+			int start, end;
+			int k;
+			for (int i = 0; i < n; i++) {
+				start = g[i << 1];
+				end = g[(i << 1) + 1];
+				for (k = start; k < end; k++, t++) {
+					if (s < m && this[s] <= k) s++;
+					if ((s & 1) == 0) continue;
+					
+					map[j++] = t;
+					if (j == minSize) return map;
+				}
+			}
+			return map;
+		}
+		
+		/// <summary>
+		/// Creates a group that correspond to a map with 'g'.
+		/// 
+		/// The group returned has members in the same order
+		/// as other groups transformed.
+		/// Boolean operations among the transformed group are still valid,
+		/// but contains only members that are in 'g'.
+		/// 
+		/// The algorithm corresponds to the following operation:
+		/// return Group.FromOrderedMap(this.MapWith(a));
+		/// 
+		/// But uses intersection and offset to map directly without creating a map.
+		/// This makes it approximately twice as fast.
+		/// 
+		/// cl 24.
+		/// </summary>
+		/// <returns>
+		/// Returns a group that is transformed to the internal space of 'g'.
+		/// </returns>
+		/// <param name='g'>
+		/// The group to use as transform.
+		/// </param>
+		public Group TransformedWith(Group a)
+		{
+			Group b = this;
+			Group arr = new Group();
+			
+			int alength = a.Count;
+			int blength = b.Count;
+			if (alength == 0 || blength == 0)
+				return arr;
+			
+			int i = 0, j = 0; 
+			bool isA = false; 
+			bool isB = false; 
+			bool was = false;
+			bool has = false;
+			int pa, pb, min;
+			int off = 0;
+			int last = int.MinValue;
+			while (i < alength && j < blength) {
+				// Get the last value from each group.
+				pa = i >= alength ? int.MaxValue : a [i];
+				pb = j >= blength ? int.MaxValue : b [j];
+				min = pa < pb ? pa : pb;
+				
+				// Advance the one with least value, both if they got the same.
+				if (pa == min) {
+					isA = !isA; 
+					i++;
+					
+					// Add to offset to get the internal indices of 'a'.
+					if (isA) off += a[i] - (i == 0 ? 0 : a[i-1]);
+				}
+				if (pb == min) {
+					isB = !isB;
+					j++;
+				}
+				
+				// Find out if the new change should be added to the result.
+				has = isA && isB;
+				if (has != was) {
+					// Subtract offset to get internal 'a' and check for dupcliates.
+					min -= off;
+					if (min == last) arr.RemoveAt(arr.Count - 1);
+					else arr.Add(min);
+					last = min;
+				}
+				
+				was = has;
+			}
+			
+			return arr;
+		}
+		
 	}
-
+	
 }
 
