@@ -82,6 +82,18 @@ namespace Play
 			Assert.AreEqual(0, c [0]);
 			Assert.AreEqual(9, c [1]);
 		}
+
+		[Test()]
+		public void TestSubtract2()
+		{
+			Group a = new Group();
+			a.Add(0);
+			a.Add(10);
+
+			Group b = a - 0;
+			Assert.True(b[0] == 1);
+			Assert.True(b[1] == 10);
+		}
 		
 		[Test()]
 		public void TestAdd1()
