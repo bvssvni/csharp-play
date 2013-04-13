@@ -296,8 +296,10 @@ namespace Play
 		public void TestContainsIndex()
 		{
 			var a = new Group(new int[]{4, 5, 8, 10});
+			Assert.False(a.ContainsIndex(3));
 			Assert.True(a.ContainsIndex(4));
 			Assert.False(a.ContainsIndex(5));
+			Assert.False(a.ContainsIndex(6));
 			Assert.False(a.ContainsIndex(7));
 			Assert.True(a.ContainsIndex(8));
 			Assert.True(a.ContainsIndex(9));
