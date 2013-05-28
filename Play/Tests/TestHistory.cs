@@ -63,6 +63,23 @@ namespace Play
 			Assert.True (c[0] == new DateTime (2005, 1, 5));
 			Assert.True (c[1] == new DateTime (2005, 1, 6));
 		}
+
+		[Test()]
+		public void TestSubtract ()
+		{
+			var a = new History ();
+			a.Add (new DateTime (2005, 1, 1));
+			a.Add (new DateTime (2005, 1, 6));
+			
+			var b = new History ();
+			b.Add (new DateTime (2005, 1, 5));
+			b.Add (new DateTime (2005, 1, 10));
+			
+			var c = History.Subtract (a, b);
+			Assert.True (c.Count == 2);
+			Assert.True (c[0] == new DateTime (2005, 1, 1));
+			Assert.True (c[1] == new DateTime (2005, 1, 5));
+		}
 	}
 }
 

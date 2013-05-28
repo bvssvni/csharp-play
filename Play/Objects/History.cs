@@ -35,6 +35,14 @@ namespace Play
 {
 	public class History : List<DateTime>
 	{
+		public History ()
+		{
+		}
+
+		public History(DateTime[] array) : base(array)
+		{
+		}
+
 		public bool IsFinite () {
 			return this.Count % 2 == 0;
 		}
@@ -146,8 +154,51 @@ namespace Play
 			return arr;
 		}
 
-		public History()
+		public static History Subtract(History a, History b)
 		{
+			int a_length = a.Count;
+			int b_length = b.Count;
+			if (b_length == 0) {
+				History c = new History(a.ToArray());
+				return c;
+			}
+			
+			History arr = new History();
+			
+			if (a_length == 0 || b_length == 0)
+				return arr;
+			
+			int i = 0, j = 0; 
+			bool isA = false; 
+			bool isB = false;
+			bool was = false;
+			bool has = false;
+			DateTime pa, pb, min; 
+			while (i < a_length) {
+				// Get the last value from each group.
+				pa = i >= a_length ? DateTime.MaxValue : a [i];
+				pb = j >= b_length ? DateTime.MaxValue : b [j];
+				min = pa < pb ? pa : pb;
+				
+				// Advance the group with least value, both if they are equal.
+				if (pa == min) {
+					isA = !isA;
+					i++;
+				}
+				if (pb == min) {
+					isB = !isB;
+					j++;
+				}
+				
+				// If it changes the truth value, add to result.
+				has = isA && !isB;
+				if (has != was)
+					arr.Add(min);
+				
+				was = has;
+			}
+			
+			return arr;
 		}
 	}
 }
