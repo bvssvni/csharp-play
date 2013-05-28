@@ -104,6 +104,48 @@ namespace Play
 			return list;
 		}
 
+		public static History Intersect(History a, History b)
+		{
+			History arr = new History();
+			
+			int alength = a.Count;
+			int blength = b.Count;
+			if (alength == 0 || blength == 0)
+				return arr;
+			
+			int i = 0, j = 0; 
+			bool isA = false; 
+			bool isB = false; 
+			bool was = false;
+			bool has = false;
+			DateTime pa, pb, min;
+			while (i < alength && j < blength) {
+				// Get the last value from each group.
+				pa = i >= alength ? DateTime.MaxValue : a [i];
+				pb = j >= blength ? DateTime.MaxValue : b [j];
+				min = pa < pb ? pa : pb;
+				
+				// Advance the one with least value, both if they got the same.
+				if (pa == min) {
+					isA = !isA; 
+					i++;
+				}
+				if (pb == min) {
+					isB = !isB;
+					j++;
+				}
+				
+				// Find out if the new change should be added to the result.
+				has = isA && isB;
+				if (has != was)
+					arr.Add(min);
+				
+				was = has;
+			}
+			
+			return arr;
+		}
+
 		public History()
 		{
 		}
