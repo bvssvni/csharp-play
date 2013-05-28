@@ -167,7 +167,39 @@ namespace Play
 			Assert.True (e.Inverted);
 			Assert.True (e[0] == new DateTime (2010, 1, 1));
 			Assert.True (e[1] == new DateTime (2010, 1, 12));
-			//*/
+		}
+
+		[Test()]
+		public void TestInvertedSubtract ()
+		{
+			var a = History.AllTime ();
+			a.Add (new DateTime (2010, 1, 1));
+			a.Add (new DateTime (2010, 1, 10));
+			
+			var b = new History ();
+			b.Add (new DateTime (2010, 1, 8));
+			b.Add (new DateTime (2010, 1, 12));
+			
+			var c = History.Subtract (a, b);
+			Assert.True (c.Inverted);
+			Assert.True (c[0] == new DateTime (2010, 1, 1));
+			Assert.True (c[1] == new DateTime (2010, 1, 12));
+
+			var d = History.Subtract (b, a);
+			Assert.False (d.Inverted);
+			Assert.True (d[0] == new DateTime (2010, 1, 8));
+			Assert.True (d[1] == new DateTime (2010, 1, 10));
+
+			b.Inverted = true;
+			var e = History.Subtract (a, b);
+			Assert.False (e.Inverted);
+			Assert.True (e[0] == new DateTime (2010, 1, 10));
+			Assert.True (e[1] == new DateTime (2010, 1, 12));
+
+			var f = History.Subtract (b, a);
+			Assert.False (f.Inverted);
+			Assert.True (f[0] == new DateTime (2010, 1, 1));
+			Assert.True (f[1] == new DateTime (2010, 1, 8));
 		}
 	}
 }

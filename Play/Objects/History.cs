@@ -81,22 +81,22 @@ namespace Play
 
 		public static History Union (History a, History b) {
 			if (a.Inverted && !b.Inverted) {
-				var res = History.Subtract (a, b);
+				var res = FiniteSubtract (a, b);
 				res.Inverted = true;
 				return res;
 			}
 			if (!a.Inverted && b.Inverted) {
-				var res = History.Subtract (b, a);
+				var res = FiniteSubtract (b, a);
 				res.Inverted = true;
 				return res;
 			}
 			if (a.Inverted && b.Inverted) {
-				var res = History.FiniteIntersect (a, b);
+				var res = FiniteIntersect (a, b);
 				res.Inverted = true;
 				return res;
 			}
 
-			return History.FiniteUnion (a, b);
+			return FiniteUnion (a, b);
 		}
 
 		public static History FiniteUnion(History a, History b)
@@ -155,22 +155,22 @@ namespace Play
 
 		public static History Intersect (History a, History b) {
 			if (a.Inverted && !b.Inverted) {
-				var res = History.Subtract (a, b);
+				var res = FiniteSubtract (a, b);
 				res.Inverted = true;
 				return res;
 			}
 			if (!a.Inverted && b.Inverted) {
-				var res = History.Subtract (b, a);
+				var res = FiniteSubtract (b, a);
 				res.Inverted = true;
 				return res;
 			}
 			if (a.Inverted && b.Inverted) {
-				var res = History.FiniteUnion (a, b);
+				var res = FiniteUnion (a, b);
 				res.Inverted = true;
 				return res;
 			}
 
-			return History.FiniteIntersect (a, b);
+			return FiniteIntersect (a, b);
 		}
 
 		public static History FiniteIntersect(History a, History b)
@@ -215,7 +215,23 @@ namespace Play
 			return arr;
 		}
 
-		public static History Subtract(History a, History b)
+		public static History Subtract (History a, History b) {
+			if (a.Inverted && !b.Inverted) {
+				var res = FiniteUnion (a, b);
+				res.Inverted = true;
+				return res;
+			}
+			if (!a.Inverted && b.Inverted) {
+				return FiniteIntersect (a, b);
+			}
+			if (a.Inverted && b.Inverted) {
+				return FiniteSubtract (b, a);
+			}
+
+			return FiniteSubtract (a, b);
+		}
+
+		public static History FiniteSubtract(History a, History b)
 		{
 			int a_length = a.Count;
 			int b_length = b.Count;
@@ -258,9 +274,9 @@ namespace Play
 				
 				was = has;
 			}
-			
+
 			return arr;
 		}
+
 	}
 }
-
