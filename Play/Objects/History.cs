@@ -91,7 +91,7 @@ namespace Play
 				return res;
 			}
 			if (a.Inverted && b.Inverted) {
-				var res = History.Intersect (a, b);
+				var res = History.FiniteIntersect (a, b);
 				res.Inverted = true;
 				return res;
 			}
@@ -153,7 +153,27 @@ namespace Play
 			return list;
 		}
 
-		public static History Intersect(History a, History b)
+		public static History Intersect (History a, History b) {
+			if (a.Inverted && !b.Inverted) {
+				var res = History.Subtract (a, b);
+				res.Inverted = true;
+				return res;
+			}
+			if (!a.Inverted && b.Inverted) {
+				var res = History.Subtract (b, a);
+				res.Inverted = true;
+				return res;
+			}
+			if (a.Inverted && b.Inverted) {
+				var res = History.FiniteUnion (a, b);
+				res.Inverted = true;
+				return res;
+			}
+
+			return History.FiniteIntersect (a, b);
+		}
+
+		public static History FiniteIntersect(History a, History b)
 		{
 			History arr = new History();
 			
