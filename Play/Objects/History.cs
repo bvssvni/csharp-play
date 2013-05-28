@@ -35,8 +35,17 @@ namespace Play
 {
 	public class History : List<DateTime>
 	{
+		public bool Inverted = false;
+
 		public History ()
 		{
+		}
+
+		public static History AllTime ()
+		{
+			var a = new History ();
+			a.Inverted = true;
+			return a;
 		}
 
 		public History(DateTime[] array) : base(array)

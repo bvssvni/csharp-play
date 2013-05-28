@@ -90,6 +90,14 @@ namespace Play
 			a.Add (new DateTime (2004, 1, 1));
 			Assert.False (History.IsEmpty (a));
 		}
+
+		[Test()]
+		public void TestAllTime ()
+		{
+			var a = History.AllTime ();
+			Assert.True (a.Count == 0);
+			Assert.True (a.Inverted);
+		}
 	}
 }
 
