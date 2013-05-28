@@ -112,6 +112,34 @@ namespace Play
 			Assert.True (a.Count == 0);
 			Assert.True (a.Inverted);
 		}
+
+		[Test()]
+		public void TestInvertedUnion ()
+		{
+			var a = History.AllTime ();
+			a.Add (new DateTime (2010, 1, 1));
+			a.Add (new DateTime (2010, 1, 10));
+
+			var b = new History ();
+			b.Add (new DateTime (2010, 1, 8));
+			b.Add (new DateTime (2010, 1, 12));
+
+			var c = History.Union (a, b);
+			Assert.True (c.Inverted);
+			Assert.True (c[0] == new DateTime (2010, 1, 1));
+			Assert.True (c[1] == new DateTime (2010, 1, 8));
+
+			var d = History.Union (b, a);
+			Assert.True (d.Inverted);
+			Assert.True (d[0] == new DateTime (2010, 1, 1));
+			Assert.True (d[1] == new DateTime (2010, 1, 8));
+
+			b.Inverted = true;
+			var e = History.Union (a, b);
+			Assert.True (e.Inverted);
+			Assert.True (e[0] == new DateTime (2010, 1, 8));
+			Assert.True (e[1] == new DateTime (2010, 1, 10));
+		}
 	}
 }
 

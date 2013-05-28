@@ -79,7 +79,27 @@ namespace Play
 			return true;
 		}
 
-		public static History Union(History a, History b)
+		public static History Union (History a, History b) {
+			if (a.Inverted && !b.Inverted) {
+				var res = History.Subtract (a, b);
+				res.Inverted = true;
+				return res;
+			}
+			if (!a.Inverted && b.Inverted) {
+				var res = History.Subtract (b, a);
+				res.Inverted = true;
+				return res;
+			}
+			if (a.Inverted && b.Inverted) {
+				var res = History.Intersect (a, b);
+				res.Inverted = true;
+				return res;
+			}
+
+			return History.FiniteUnion (a, b);
+		}
+
+		public static History FiniteUnion(History a, History b)
 		{
 			History list = new History();
 			
