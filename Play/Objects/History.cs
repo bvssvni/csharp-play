@@ -43,6 +43,14 @@ namespace Play
 		{
 		}
 
+		public static bool IsEmpty(History a)
+		{
+			if (a == null || a.Count == 0)
+				return true;
+			
+			return false;
+		}
+
 		public bool IsFinite () {
 			return this.Count % 2 == 0;
 		}

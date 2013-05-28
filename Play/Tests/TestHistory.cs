@@ -80,6 +80,16 @@ namespace Play
 			Assert.True (c[0] == new DateTime (2005, 1, 1));
 			Assert.True (c[1] == new DateTime (2005, 1, 5));
 		}
+
+		[Test()]
+		public void TestIsEmpty () 
+		{
+			var a = new History ();
+			Assert.True (History.IsEmpty (a));
+			Assert.True (History.IsEmpty (null));
+			a.Add (new DateTime (2004, 1, 1));
+			Assert.False (History.IsEmpty (a));
+		}
 	}
 }
 
