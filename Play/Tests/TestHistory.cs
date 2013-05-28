@@ -153,12 +153,12 @@ namespace Play
 			b.Add (new DateTime (2010, 1, 12));
 			
 			var c = History.Intersect (a, b);
-			Assert.True (c.Inverted);
+			Assert.False (c.Inverted);
 			Assert.True (c[0] == new DateTime (2010, 1, 1));
 			Assert.True (c[1] == new DateTime (2010, 1, 8));
 
 			var d = History.Intersect (b, a);
-			Assert.True (d.Inverted);
+			Assert.False (d.Inverted);
 			Assert.True (d[0] == new DateTime (2010, 1, 1));
 			Assert.True (d[1] == new DateTime (2010, 1, 8));
 

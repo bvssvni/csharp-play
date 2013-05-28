@@ -3,8 +3,10 @@ History - Group-oriented programming for time.
 BSD license.  
 by Sven Nilsen, 2012  
 http://www.cutoutpro.com  
-Version: 0.000 in angular degrees version notation  
+Version: 0.001 in angular degrees version notation  
 http://isprogrammingeasy.blogspot.no/2012/08/angular-degrees-versioning-notation.html  
+
+0.001 - Fixed bug in 'Intersect'.
 
 Redistribution and use in source and binary forms, with or without  
 modification, are permitted provided that the following conditions are met:  
@@ -155,14 +157,10 @@ namespace Play
 
 		public static History Intersect (History a, History b) {
 			if (a.Inverted && !b.Inverted) {
-				var res = FiniteSubtract (a, b);
-				res.Inverted = true;
-				return res;
+				return FiniteSubtract (a, b);
 			}
 			if (!a.Inverted && b.Inverted) {
-				var res = FiniteSubtract (b, a);
-				res.Inverted = true;
-				return res;
+				return FiniteSubtract (b, a);
 			}
 			if (a.Inverted && b.Inverted) {
 				var res = FiniteUnion (a, b);

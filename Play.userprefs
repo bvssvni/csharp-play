@@ -1,11 +1,10 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Play/Objects/Group.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Play/Objects/History.cs">
     <Files>
-      <File FileName="Play/Tests/TestGroup.cs" Line="523" Column="1" />
-      <File FileName="Play/Modules/LinearGeneratorModule.cs" Line="1" Column="1" />
-      <File FileName="Play/Objects/Generator.cs" Line="1" Column="1" />
-      <File FileName="Play/Objects/Group.cs" Line="1150" Column="1" />
+      <File FileName="Play/Objects/History.cs" Line="312" Column="2" />
+      <File FileName="Play/Tests/TestHistory.cs" Line="213" Column="4" />
+      <File FileName="Play/Objects/Group.cs" Line="1144" Column="4" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -13,7 +12,7 @@
           <Node name="Play" expanded="True">
             <Node name="Modules" expanded="True" />
             <Node name="Objects" expanded="True">
-              <Node name="Group.cs" selected="True" />
+              <Node name="History.cs" selected="True" />
             </Node>
             <Node name="Tests" expanded="True" />
           </Node>
@@ -31,9 +30,11 @@
         <State selected="True" />
       </Pad>
       <Pad Id="MonoDevelop.NUnit.TestPad">
-        <State expanded="True" selected="True">
+        <State expanded="True">
           <Node name="Play" expanded="True">
-            <Node name="Play" expanded="True" />
+            <Node name="Play" expanded="True">
+              <Node name="TestHistory" expanded="True" selected="True" />
+            </Node>
           </Node>
         </State>
       </Pad>
