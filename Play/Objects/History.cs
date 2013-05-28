@@ -158,10 +158,10 @@ namespace Play
 
 		public static History Intersect (History a, History b) {
 			if (a.Inverted && !b.Inverted) {
-				return SubSubtract (a, b);
+				return SubSubtract (b, a);
 			}
 			if (!a.Inverted && b.Inverted) {
-				return SubSubtract (b, a);
+				return SubSubtract (a, b);
 			}
 			if (a.Inverted && b.Inverted) {
 				var res = SubUnion (a, b);
@@ -245,6 +245,9 @@ namespace Play
 			if (a_length == 0 || b_length == 0)
 				return arr;
 
+			// TEST
+			Console.WriteLine ("a ({0}) b ({1})", a, b);
+
 			int i = 0, j = 0; 
 			bool isA = false; 
 			bool isB = false;
@@ -252,6 +255,10 @@ namespace Play
 			bool has = false;
 			DateTime pa, pb, min; 
 			while (i < a_length || j < b_length) {
+				// TEST
+				Console.WriteLine ("Inside loop");
+				Console.WriteLine ("i {0} j {1}", i, j);
+
 				// Get the last value from each group.
 				pa = i >= a_length ? DateTime.MaxValue : a [i];
 				pb = j >= b_length ? DateTime.MaxValue : b [j];
@@ -269,6 +276,10 @@ namespace Play
 				
 				// If it changes the truth value, add to result.
 				has = isA && !isB;
+
+				// TEST
+				Console.WriteLine ("isA {0} isB {1} has {2}", isA, isB, has);
+
 				if (has != was)
 					arr.Add(min);
 				
@@ -307,6 +318,32 @@ namespace Play
 			}
 			
 			return sum;
+		}
+
+		public History Before (DateTime date) {
+
+			// TEST
+			Console.WriteLine ("Before");
+
+			var before = History.AllTime ();
+			before.Add (date);
+			return this * before;
+		}
+		
+		public History After (DateTime date) {
+			var after = new History ();
+			after.Add (date);
+			return this * after;
+		}
+		
+		public override string ToString()
+		{
+			var strb = new System.Text.StringBuilder ();
+			foreach (var moment in this) {
+				strb.Append (moment.ToString () + "\r\n");
+			}
+			
+			return strb.ToString ();
 		}
 	}
 }

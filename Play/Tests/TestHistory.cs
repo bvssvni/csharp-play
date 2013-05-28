@@ -191,13 +191,13 @@ namespace Play
 			
 			var c = History.Intersect (a, b);
 			Assert.False (c.Inverted);
-			Assert.True (c[0] == new DateTime (2010, 1, 1));
-			Assert.True (c[1] == new DateTime (2010, 1, 8));
+			Assert.True (c[0] == new DateTime (2010, 1, 10));
+			Assert.True (c[1] == new DateTime (2010, 1, 12));
 
 			var d = History.Intersect (b, a);
 			Assert.False (d.Inverted);
-			Assert.True (d[0] == new DateTime (2010, 1, 1));
-			Assert.True (d[1] == new DateTime (2010, 1, 8));
+			Assert.True (d[0] == new DateTime (2010, 1, 10));
+			Assert.True (d[1] == new DateTime (2010, 1, 12));
 
 			b.Inverted = true;
 			var e = History.Intersect (a, b);
@@ -320,6 +320,33 @@ namespace Play
 			a.Add (new DateTime (2008, 3, 8));
 			var sum = History.Sum (a);
 			Assert.True (sum.TotalDays == 7);
+		}
+
+		[Test()]
+		public void TestBefore ()
+		{
+			var a = new History ();
+			a.Add (new DateTime (2002, 3, 15));
+			a.Add (new DateTime (2002, 3, 20));
+
+			var b = a.Before (new DateTime (2002, 3, 18));
+			Assert.False (b.Inverted);
+			Assert.True (b.Count == 2);
+			Assert.True (b[0] == new DateTime (2002, 3, 15));
+			Assert.True (b[1] == new DateTime (2002, 3, 18));
+		}
+
+		[Test()]
+		public void TestAfter ()
+		{
+			var a = new History ();
+			a.Add (new DateTime (2003, 3, 15));
+			a.Add (new DateTime (2003, 3, 20));
+
+			var b = a.After (new DateTime (2003, 3, 18));
+			Assert.True (b.Count == 2);
+			Assert.True (b[0] == new DateTime (2003, 3, 18));
+			Assert.True (b[1] == new DateTime (2003, 3, 20));
 		}
 	}
 }
