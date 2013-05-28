@@ -179,14 +179,14 @@ namespace Play
 			int blength = b.Count;
 			if (alength == 0 || blength == 0)
 				return arr;
-			
+
 			int i = 0, j = 0; 
 			bool isA = false; 
 			bool isB = false; 
 			bool was = false;
 			bool has = false;
 			DateTime pa, pb, min;
-			while (i < alength && j < blength) {
+			while (i < alength || j < blength) {
 				// Get the last value from each group.
 				pa = i >= alength ? DateTime.MaxValue : a [i];
 				pb = j >= blength ? DateTime.MaxValue : b [j];
@@ -201,9 +201,10 @@ namespace Play
 					isB = !isB;
 					j++;
 				}
-				
+
 				// Find out if the new change should be added to the result.
 				has = isA && isB;
+
 				if (has != was)
 					arr.Add(min);
 				
@@ -242,14 +243,14 @@ namespace Play
 			
 			if (a_length == 0 || b_length == 0)
 				return arr;
-			
+
 			int i = 0, j = 0; 
 			bool isA = false; 
 			bool isB = false;
 			bool was = false;
 			bool has = false;
 			DateTime pa, pb, min; 
-			while (i < a_length) {
+			while (i < a_length || j < b_length) {
 				// Get the last value from each group.
 				pa = i >= a_length ? DateTime.MaxValue : a [i];
 				pb = j >= b_length ? DateTime.MaxValue : b [j];

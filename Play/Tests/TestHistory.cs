@@ -142,6 +142,43 @@ namespace Play
 		}
 
 		[Test()]
+		public void TestNormalInfiniteUnion ()
+		{
+			var a = new History ();
+			a.Add (new DateTime (2003, 1, 1));
+
+			var b = new History ();
+			b.Add (new DateTime (2003, 1, 10));
+			b.Add (new DateTime (2003, 1, 12));
+
+			var c = a + b;
+			Assert.True (c.Count == 1);
+			Assert.True (c[0] == new DateTime (2003, 1, 1));
+
+			var d = b + a;
+			Assert.True (d.Count == 1);
+			Assert.True (d[0] == new DateTime (2003, 1, 1));
+		}
+
+		[Test()]
+		public void TestNormalInfiniteUnion2 ()
+		{
+			var a = new History ();
+			a.Add (new DateTime (2009, 1, 1));
+
+			var b = new History ();
+			b.Add (new DateTime (2009, 1, 2));
+
+			var c = a + b;
+			Assert.True (c.Count == 1);
+			Assert.True (c[0] == new DateTime (2009, 1, 1));
+
+			var d = b + a;
+			Assert.True (d.Count == 1);
+			Assert.True (d[0] == new DateTime (2009, 1, 1));
+		}
+
+		[Test()]
 		public void TestInvertedIntersect ()
 		{
 			var a = History.AllTime ();
@@ -167,6 +204,41 @@ namespace Play
 			Assert.True (e.Inverted);
 			Assert.True (e[0] == new DateTime (2010, 1, 1));
 			Assert.True (e[1] == new DateTime (2010, 1, 12));
+		}
+
+		[Test()]
+		public void TestNormalInfiniteIntersect ()
+		{
+			var a = new History ();
+			a.Add (new DateTime (2009, 1, 1));
+
+			var b = new History ();
+			b.Add (new DateTime (2010, 1, 1));
+			b.Add (new DateTime (2010, 1, 10));
+
+			var c = a * b;
+			Assert.False (c.Inverted);
+			Assert.True (c.Count == 2);
+			Assert.True (c[0] == new DateTime (2010, 1, 1));
+			Assert.True (c[1] == new DateTime (2010, 1, 10));
+		}
+
+		[Test()]
+		public void TestNormalInfiniteIntersect2 ()
+		{
+			var a = new History ();
+			a.Add (new DateTime (2002, 1, 1));
+
+			var b = new History ();
+			b.Add (new DateTime (2002, 1, 10));
+
+			var c = a * b;
+			Assert.True (c.Count == 1);
+			Assert.True (c[0] == new DateTime (2002, 1, 10));
+
+			var d = b * a;
+			Assert.True (d.Count == 1);
+			Assert.True (d[0] == new DateTime (2002, 1, 10));
 		}
 
 		[Test()]
@@ -200,6 +272,44 @@ namespace Play
 			Assert.False (f.Inverted);
 			Assert.True (f[0] == new DateTime (2010, 1, 1));
 			Assert.True (f[1] == new DateTime (2010, 1, 8));
+		}
+
+		[Test()]
+		public void TestNormalInfiniteSubtract ()
+		{
+			var a = new History ();
+			a.Add (new DateTime (2004, 1, 1));
+
+			var b = new History ();
+			b.Add (new DateTime (2005, 1, 1));
+			b.Add (new DateTime (2005, 1, 4));
+
+			var c = a - b;
+			Assert.True (c.Count == 3);
+			Assert.True (c[0] == new DateTime (2004, 1, 1));
+			Assert.True (c[1] == new DateTime (2005, 1, 1));
+			Assert.True (c[2] == new DateTime (2005, 1, 4));
+
+			var d = b - a;
+			Assert.True (d.Count == 0);
+		}
+
+		[Test()]
+		public void TestNormalInfiniteSubtract2 ()
+		{
+			var a = new History ();
+			a.Add (new DateTime (2003, 1, 1));
+
+			var b = new History ();
+			b.Add (new DateTime (2003, 1, 5));
+
+			var c = a - b;
+			Assert.True (c.Count == 2);
+			Assert.True (c[0] == new DateTime (2003, 1, 1));
+			Assert.True (c[1] == new DateTime (2003, 1, 5));
+
+			var d = b - a;
+			Assert.True (d.Count == 0);
 		}
 
 		[Test()]

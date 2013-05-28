@@ -1,20 +1,19 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Play/Objects/History.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Play/Tests/TestHistory.cs">
     <Files>
-      <File FileName="Play/Objects/History.cs" Line="312" Column="2" />
-      <File FileName="Play/Tests/TestHistory.cs" Line="213" Column="4" />
-      <File FileName="Play/Objects/Group.cs" Line="1144" Column="4" />
+      <File FileName="Play/Objects/History.cs" Line="276" Column="15" />
+      <File FileName="Play/Tests/TestHistory.cs" Line="161" Column="16" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Play" expanded="True">
             <Node name="Modules" expanded="True" />
-            <Node name="Objects" expanded="True">
-              <Node name="History.cs" selected="True" />
+            <Node name="Objects" expanded="True" />
+            <Node name="Tests" expanded="True">
+              <Node name="TestHistory.cs" selected="True" />
             </Node>
-            <Node name="Tests" expanded="True" />
           </Node>
         </State>
       </Pad>
@@ -31,9 +30,9 @@
       </Pad>
       <Pad Id="MonoDevelop.NUnit.TestPad">
         <State expanded="True">
-          <Node name="Play" expanded="True">
+          <Node name="Play" expanded="True" selected="True">
             <Node name="Play" expanded="True">
-              <Node name="TestHistory" expanded="True" selected="True" />
+              <Node name="TestHistory" expanded="True" />
             </Node>
           </Node>
         </State>
