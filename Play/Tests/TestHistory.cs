@@ -92,6 +92,13 @@ namespace Play
 		}
 
 		[Test()]
+		public void TestAllTimeIsNotEmpty ()
+		{
+			var a = History.AllTime ();
+			Assert.False (History.IsEmpty (a));
+		}
+
+		[Test()]
 		public void TestAllTime ()
 		{
 			var a = History.AllTime ();

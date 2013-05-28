@@ -54,7 +54,7 @@ namespace Play
 
 		public static bool IsEmpty(History a)
 		{
-			if (a == null || a.Count == 0)
+			if (a == null || a.Count == 0 && !a.Inverted)
 				return true;
 			
 			return false;
