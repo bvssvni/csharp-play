@@ -2,8 +2,8 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Play/Objects/History.cs">
     <Files>
-      <File FileName="Play/Objects/History.cs" Line="312" Column="2" />
-      <File FileName="Play/Tests/TestHistory.cs" Line="173" Column="31" />
+      <File FileName="Play/Objects/History.cs" Line="349" Column="2" />
+      <File FileName="Play/Tests/TestHistory.cs" Line="339" Column="11" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
