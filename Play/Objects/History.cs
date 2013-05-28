@@ -50,6 +50,60 @@ namespace Play
 			return true;
 		}
 
+		public static History Union(History a, History b)
+		{
+			History list = new History();
+			
+			int a_length = a.Count;
+			int b_length = b.Count;
+			
+			if (a_length == 0 && b_length == 0)
+				return list;
+			
+			if (a_length == 0) {
+				list.AddRange(b);
+				
+				return list;
+			}
+			if (b_length == 0) {
+				list.AddRange(a);
+				
+				return list;
+			}
+			
+			int i = 0, j = 0; 
+			bool isA = false; 
+			bool isB = false; 
+			bool was = false;
+			bool has = false;
+			DateTime pa, pb, min;
+			while (i < a_length || j < b_length) {
+				// Get the least value.
+				pa = i >= a_length ? DateTime.MaxValue : a [i];
+				pb = j >= b_length ? DateTime.MaxValue : b [j];
+				min = pa < pb ? pa : pb;
+				
+				// Advance the least value, both if both are equal.
+				if (pa == min) {
+					isA = !isA;
+					i++;
+				}
+				if (pb == min) {
+					isB = !isB;
+					j++;
+				}
+				
+				// Add to result if this changes the truth value.
+				has = isA || isB;
+				if (has != was)
+					list.Add(min);
+				
+				was = isA || isB;
+			}
+			
+			return list;
+		}
+
 		public History()
 		{
 		}
