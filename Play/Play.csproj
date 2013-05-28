@@ -41,6 +41,8 @@
     <Compile Include="Objects\Generator.cs" />
     <Compile Include="Modules\LinearGeneratorModule.cs" />
     <Compile Include="Tests\TestGenerator.cs" />
+    <Compile Include="Objects\History.cs" />
+    <Compile Include="Tests\TestHistory.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
