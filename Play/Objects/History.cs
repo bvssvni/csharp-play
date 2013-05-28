@@ -60,8 +60,12 @@ namespace Play
 			return false;
 		}
 
-		public bool IsFinite () {
-			return this.Count % 2 == 0;
+		public static bool IsFinite (History a) {
+			if (a.Inverted) {
+				return false;
+			}
+
+			return a.Count % 2 == 0;
 		}
 
 		public bool IsSequential () {

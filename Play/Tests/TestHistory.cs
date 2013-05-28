@@ -11,9 +11,9 @@ namespace Play
 		{
 			var history = new History ();
 			history.Add (new DateTime (2002, 1, 1));
-			Assert.False (history.IsFinite ());
+			Assert.False (History.IsFinite (history));
 			history.Add (new DateTime (2002, 1, 4));
-			Assert.True (history.IsFinite ());
+			Assert.True (History.IsFinite (history));
 		}
 
 		[Test()]
@@ -96,6 +96,13 @@ namespace Play
 		{
 			var a = History.AllTime ();
 			Assert.False (History.IsEmpty (a));
+		}
+
+		[Test()]
+		public void TestAllTimeIsNotFinite ()
+		{
+			var a = History.AllTime ();
+			Assert.False (History.IsFinite (a));
 		}
 
 		[Test()]
