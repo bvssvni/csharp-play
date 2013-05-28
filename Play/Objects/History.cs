@@ -6,6 +6,7 @@ http://www.cutoutpro.com
 Version: 0.001 in angular degrees version notation  
 http://isprogrammingeasy.blogspot.no/2012/08/angular-degrees-versioning-notation.html  
 
+0.002 - Fixed bug for normal infinite operations.
 0.001 - Fixed bug in 'Intersect'.
 
 Redistribution and use in source and binary forms, with or without  
@@ -83,25 +84,25 @@ namespace Play
 
 		public static History Union (History a, History b) {
 			if (a.Inverted && !b.Inverted) {
-				var res = FiniteSubtract (a, b);
+				var res = SubSubtract (a, b);
 				res.Inverted = true;
 				return res;
 			}
 			if (!a.Inverted && b.Inverted) {
-				var res = FiniteSubtract (b, a);
+				var res = SubSubtract (b, a);
 				res.Inverted = true;
 				return res;
 			}
 			if (a.Inverted && b.Inverted) {
-				var res = FiniteIntersect (a, b);
+				var res = SubIntersect (a, b);
 				res.Inverted = true;
 				return res;
 			}
 
-			return FiniteUnion (a, b);
+			return SubUnion (a, b);
 		}
 
-		public static History FiniteUnion(History a, History b)
+		private static History SubUnion(History a, History b)
 		{
 			History list = new History();
 			
@@ -157,21 +158,21 @@ namespace Play
 
 		public static History Intersect (History a, History b) {
 			if (a.Inverted && !b.Inverted) {
-				return FiniteSubtract (a, b);
+				return SubSubtract (a, b);
 			}
 			if (!a.Inverted && b.Inverted) {
-				return FiniteSubtract (b, a);
+				return SubSubtract (b, a);
 			}
 			if (a.Inverted && b.Inverted) {
-				var res = FiniteUnion (a, b);
+				var res = SubUnion (a, b);
 				res.Inverted = true;
 				return res;
 			}
 
-			return FiniteIntersect (a, b);
+			return SubIntersect (a, b);
 		}
 
-		public static History FiniteIntersect(History a, History b)
+		private static History SubIntersect(History a, History b)
 		{
 			History arr = new History();
 			
@@ -216,21 +217,21 @@ namespace Play
 
 		public static History Subtract (History a, History b) {
 			if (a.Inverted && !b.Inverted) {
-				var res = FiniteUnion (a, b);
+				var res = SubUnion (a, b);
 				res.Inverted = true;
 				return res;
 			}
 			if (!a.Inverted && b.Inverted) {
-				return FiniteIntersect (a, b);
+				return SubIntersect (a, b);
 			}
 			if (a.Inverted && b.Inverted) {
-				return FiniteSubtract (b, a);
+				return SubSubtract (b, a);
 			}
 
-			return FiniteSubtract (a, b);
+			return SubSubtract (a, b);
 		}
 
-		public static History FiniteSubtract(History a, History b)
+		private static History SubSubtract(History a, History b)
 		{
 			int a_length = a.Count;
 			int b_length = b.Count;
