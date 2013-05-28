@@ -41,7 +41,7 @@ namespace Play
 			b.Add (new DateTime (2005, 1, 5));
 			b.Add (new DateTime (2005, 1, 10));
 
-			var c = History.Union (a, b);
+			var c = a + b;
 			Assert.True (c.Count == 2);
 			Assert.True (c[0] == new DateTime (2005, 1, 1));
 			Assert.True (c[1] == new DateTime (2005, 1, 10));
@@ -58,7 +58,7 @@ namespace Play
 			b.Add (new DateTime (2005, 1, 5));
 			b.Add (new DateTime (2005, 1, 10));
 
-			var c = History.Intersect (a, b);
+			var c = a * b;
 			Assert.True (c.Count == 2);
 			Assert.True (c[0] == new DateTime (2005, 1, 5));
 			Assert.True (c[1] == new DateTime (2005, 1, 6));
@@ -75,7 +75,7 @@ namespace Play
 			b.Add (new DateTime (2005, 1, 5));
 			b.Add (new DateTime (2005, 1, 10));
 			
-			var c = History.Subtract (a, b);
+			var c = a - b;
 			Assert.True (c.Count == 2);
 			Assert.True (c[0] == new DateTime (2005, 1, 1));
 			Assert.True (c[1] == new DateTime (2005, 1, 5));
@@ -200,6 +200,16 @@ namespace Play
 			Assert.False (f.Inverted);
 			Assert.True (f[0] == new DateTime (2010, 1, 1));
 			Assert.True (f[1] == new DateTime (2010, 1, 8));
+		}
+
+		[Test()]
+		public void TestSum ()
+		{
+			var a = new History ();
+			a.Add (new DateTime (2008, 3, 1));
+			a.Add (new DateTime (2008, 3, 8));
+			var sum = History.Sum (a);
+			Assert.True (sum.TotalDays == 7);
 		}
 	}
 }

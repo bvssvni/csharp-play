@@ -278,5 +278,35 @@ namespace Play
 			return arr;
 		}
 
+		public static History operator +(History a, History b)
+		{
+			return History.Union(a, b);
+		}
+		
+		public static History operator *(History a, History b)
+		{
+			return History.Intersect(a, b);
+		}
+		
+		public static History operator -(History a, History b)
+		{
+			return History.Subtract(a, b);
+		}
+
+		public static TimeSpan Sum (History a) {
+			if (!History.IsFinite (a)) {
+				return TimeSpan.MaxValue;
+			}
+			
+			var sum = new TimeSpan ();
+			int n = a.Count >> 1;
+			for (int i = 0; i < n; i++) {
+				var start = a[i];
+				var end = a[i+1];
+				sum += end - start;
+			}
+			
+			return sum;
+		}
 	}
 }
